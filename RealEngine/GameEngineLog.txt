@@ -1,0 +1,25 @@
+Mon Jun 19 18:03:05 2023
+[INFO]: Starting the SceneManager
+[INFO]: OpenGL version: 4.6.0 NVIDIA 531.79
+[INFO]: Graphics card vendor NVIDIA Corporation
+[INFO]: Graphics card name NVIDIA GeForce RTX 4050 Laptop GPU/PCIe/SSE2
+[INFO]: GLSL Version 4.60 NVIDIA
+[INFO]: Created Scene0: 
+[INFO]: Loading assets Scene0: 
+[INFO]: Uniforms:
+"lightPos" loc:3
+"modelMatrix" loc:2
+"projectionMatrix" loc:0
+"skullTexture" loc:4
+"viewMatrix" loc:1
+
+[INFO]: Uniforms:
+"lightPos" loc:3
+"modelMatrix" loc:2
+"projectionMatrix" loc:0
+"skullTexture" loc:4
+"viewMatrix" loc:1
+
+[INFO]: Deleting the SceneManager
+[INFO]: Deleting assets Scene0: 
+[INFO]: Deleted Scene0: 
