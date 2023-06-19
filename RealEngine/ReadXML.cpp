@@ -15,8 +15,7 @@ void ReadXML::ReadConfig() {
 	XMLElement* rootData = XML.RootElement();
 
 	//location
-	XMLElement* sceneData = rootData->FirstChildElement("Scene1");
-	XMLElement* boardData = sceneData->FirstChildElement("Board");
+	XMLElement* boardData = rootData->FirstChildElement("CheckerBoard");
 	XMLElement* position = boardData->FirstChildElement("Position");
 
 	SetBoardPosition(MATH::Vec3(position->FloatAttribute("x"),

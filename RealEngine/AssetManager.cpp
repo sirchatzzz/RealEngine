@@ -52,9 +52,7 @@ void AssetManager::ReadXML() {
 
 	XMLElement* rootData = XML.RootElement();
 
-	//location
-	XMLElement* sceneData = rootData->FirstChildElement("Scene1");
-	XMLElement* assetsData = sceneData->FirstChildElement("Assets");
+	XMLElement* assetsData = rootData->FirstChildElement("Assets");
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
 		if (child->Name() == mesh) {

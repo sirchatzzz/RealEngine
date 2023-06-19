@@ -1,8 +1,7 @@
-#ifndef SCENE0_H
-#define SCENE0_H
-#include "Scene.h"
+#pragma once
 #include <Vector.h>
 #include <Matrix.h>
+#include "Scene.h"
 #include "LightActor.h"
 #include "Actor.h"
 #include "Component.h"
@@ -13,6 +12,7 @@
 #include "TransformComponent.h"
 #include "AssetManager.h"
 #include "ReadXML.h"
+
 using namespace MATH;
 
 class Scene0 : public Scene {
@@ -35,6 +35,3 @@ public:
 	virtual void Render() const override;
 	virtual void HandleEvents(const SDL_Event &sdlEvent) override;
 };
-
-
-#endif // SCENE0_H

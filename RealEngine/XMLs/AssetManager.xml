@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
-  <Scene1>
     <Assets>
 		<Mesh name ="SM_Plane" path ="meshes/Plane.obj"/>
 		<Mesh name ="SM_CheckerPiece" path ="meshes/CheckerPiece.obj"/>
@@ -9,5 +8,4 @@
 		<Material name ="M_WhiteChecker" path ="textures/whiteCheckerPiece.png"/>
 		<Material name ="M_RedChecker" path ="textures/redCheckerPiece.png"/>
     </Assets>
-  </Scene1>
 </Root>

@@ -1,9 +1,10 @@
 #include <glew.h>
 #include <iostream>
 #include <SDL.h>
-#include "Scene0.h"
-#include <MMath.h>
 #include <QMath.h>
+#include <MMath.h>
+#include "AudioComponent.h"
+#include "Scene0.h"
 #include "Debug.h"
 
 Scene0::Scene0() : checkerBoard(nullptr), camera(nullptr), light(nullptr){
@@ -28,6 +29,7 @@ bool Scene0::OnCreate() {
 	checkerBoard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	checkerBoard->AddComponent<CameraActor>(nullptr);
 	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
+	checkerBoard->AddComponent<AudioComponent>(nullptr);
 	checkerBoard->OnCreate();
 
 	//camera
@@ -90,6 +92,8 @@ bool Scene0::OnCreate() {
 		whiteCheckers.push_back(whiteCheckerPiece);
 	}
 
+
+
 	return true;
 }
 
@@ -137,13 +141,13 @@ void Scene0::Render() const {
 	glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
 	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
-	for (int i = 0; i < redCheckers.size(); ++i) {
+	for (unsigned int i = 0; i < redCheckers.size(); ++i) {
 		glBindTexture(GL_TEXTURE_2D, redCheckers[i]->GetComponent<MaterialComponent>()->getTextureID());
 		glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * redCheckers[i]->getModelMatrix());
 		redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
 
-	for (int i = 0; i < whiteCheckers.size(); ++i) {
+	for (unsigned int i = 0; i < whiteCheckers.size(); ++i) {
 		glBindTexture(GL_TEXTURE_2D, whiteCheckers[i]->GetComponent<MaterialComponent>()->getTextureID());
 		glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * whiteCheckers[i]->getModelMatrix());
 		whiteCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);

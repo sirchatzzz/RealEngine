@@ -1,10 +1,10 @@
 #pragma once
 #include <iostream>
 #include <fstream>
-#include "tinyxml2.h"
 #include <Vector.h>
 #include <VMath.h>
 #include <Quaternion.h>
+#include "tinyxml2.h"
 
 using namespace tinyxml2;
 
