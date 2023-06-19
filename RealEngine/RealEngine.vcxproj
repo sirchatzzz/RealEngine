@@ -172,6 +172,10 @@
     <None Include="shaders\textureFrag.glsl" />
     <None Include="shaders\textureVert.glsl" />
   </ItemGroup>
+  <ItemGroup>
+    <Xml Include="XMLs\AssetManager.xml" />
+    <Xml Include="XMLs\Config.xml" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

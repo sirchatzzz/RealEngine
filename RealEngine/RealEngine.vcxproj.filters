@@ -9,10 +9,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Header Files\Scenes">
       <UniqueIdentifier>{252de02d-6b89-41ec-b372-ddfef9870bbe}</UniqueIdentifier>
     </Filter>
@@ -24,6 +20,13 @@
     </Filter>
     <Filter Include="Source Files\Components">
       <UniqueIdentifier>{673f3053-2ea5-4c67-90d5-64e2e5316c30}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="XMLs">
+      <UniqueIdentifier>{0e447834-b813-486b-be2b-51160e5b3e91}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -143,21 +146,29 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameEngineLog.txt">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\defaultVert.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\textureFrag.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\textureVert.glsl">
-      <Filter>Resource Files</Filter>
+      <Filter>Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="XMLs\AssetManager.xml">
+      <Filter>XMLs</Filter>
+    </Xml>
+    <Xml Include="XMLs\Config.xml">
+      <Filter>XMLs</Filter>
+    </Xml>
   </ItemGroup>
 </Project>
