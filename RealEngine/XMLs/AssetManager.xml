@@ -7,7 +7,7 @@
 		<Material name ="M_CheckerBoard" path ="textures/8x8_checkered_board.png"/>
 		<Material name ="M_WhiteChecker" path ="textures/whiteCheckerPiece.png"/>
 		<Material name ="M_RedChecker" path ="textures/redCheckerPiece.png"/>
-		<Sound name ="Ding" path ="sound/ding.mp3"/>
-		<Sound name ="Hit" path ="sound/hit.mp3"/>
+		<Sound name ="SE_Ding" path ="sound/ding.mp3"/>
+		<Sound name ="SE_Hit" path ="sound/hit.mp3"/>
     </Assets>
 </Root>

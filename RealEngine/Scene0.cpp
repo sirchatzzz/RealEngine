@@ -2,11 +2,10 @@
 #include <iostream>
 #include <QMath.h>
 #include <MMath.h>
-#include "AudioComponent.h"
 #include "Scene0.h"
 #include "Debug.h"
 
-Scene0::Scene0() : checkerBoard(nullptr), camera(nullptr), light(nullptr){
+Scene0::Scene0(){
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 }
 
@@ -21,16 +20,6 @@ bool Scene0::OnCreate() {
 	light = std::make_shared<LightActor>(nullptr, Vec3(0.0f, 0.0f, 0.0f));
 	XML.ReadConfig();
 
-	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-		printf("Error. Failed to initialize audio. \n");
-		return false;
-	}
-
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
-		printf("Error. Failed to open audio. \n");
-		return false;
-	}
-
 	//checker board
 	checkerBoard = std::make_shared<Actor>(nullptr);
 	checkerBoard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_Plane"));
@@ -38,7 +27,7 @@ bool Scene0::OnCreate() {
 	checkerBoard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	checkerBoard->AddComponent<CameraActor>(nullptr);
 	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
-	checkerBoard->AddComponent<AudioComponent>(assetManager->GetComponent<AudioComponent>("Ding"));
+	checkerBoard->AddComponent<AudioComponent>(assetManager->GetComponent<AudioComponent>("SE_Ding"));
 	checkerBoard->OnCreate();
 
 	//camera
@@ -113,7 +102,7 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
     case SDL_KEYDOWN:
 		if (SDL_SCANCODE_W) {
 			printf("Sound \n");
-			Mix_PlayChannel(-1, (assetManager->GetComponent<AudioComponent>("Ding").get()->GetSoundEffect()), 0);
+			Mix_PlayChannel(-1, (assetManager->GetComponent<AudioComponent>("SE_Ding").get()->GetSoundEffect()), 0);
 		}
 		break;
 
