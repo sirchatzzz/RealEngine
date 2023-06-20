@@ -4,7 +4,7 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 #Engine log ignore
-GameEngineLog.txt
+RealEngine/GameEngineLog.txt
 
 # User-specific files
 *.rsuser
