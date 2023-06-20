@@ -1,6 +1,5 @@
 #include <glew.h>
 #include <iostream>
-#include <SDL.h>
 #include <QMath.h>
 #include <MMath.h>
 #include "AudioComponent.h"
@@ -29,7 +28,7 @@ bool Scene0::OnCreate() {
 	checkerBoard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	checkerBoard->AddComponent<CameraActor>(nullptr);
 	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
-	checkerBoard->AddComponent<AudioComponent>(nullptr);
+	checkerBoard->AddComponent<AudioComponent>(assetManager->GetComponent<AudioComponent>("Ding"));
 	checkerBoard->OnCreate();
 
 	//camera
@@ -123,6 +122,9 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 void Scene0::Update(const float deltaTime) {
 	static float time = 0.0f;
 	time += deltaTime / 2.0f;
+	if (SDL_SCANCODE_W) {
+		Mix_FreeChunk(assetManager->GetComponent<AudioComponent>("Ding"));
+	}
 	checkerBoard->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(20.0f * cos(time), Vec3(0.0f, 1.0f, 1.0f)));
 }
 void Scene0::Render() const {

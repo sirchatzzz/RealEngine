@@ -49,6 +49,7 @@ void AssetManager::ReadXML() {
 	std::string mesh = "Mesh";
 	std::string shader = "Shader";
 	std::string material = "Material";
+	std::string sound = "Sound";
 
 	XMLElement* rootData = XML.RootElement();
 
@@ -63,6 +64,9 @@ void AssetManager::ReadXML() {
 		}
 		if (child->Name() == material) {
 			AddComponent<MaterialComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
+		}
+		if (child->Name() == sound) {
+			AddComponent<AudioComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
 		}
 	}
 }

@@ -7,6 +7,7 @@
 #include "MeshComponent.h"
 #include "ShaderComponent.h"
 #include "MaterialComponent.h"
+#include "AudioComponent.h"
 #include "tinyxml2.h"
 
 using namespace tinyxml2;

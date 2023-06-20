@@ -182,8 +182,5 @@
     <Xml Include="XMLs\Config.xml">
       <Filter>XMLs</Filter>
     </Xml>
-    <Xml Include="XMLs\Sound.xml">
-      <Filter>XMLs</Filter>
-    </Xml>
   </ItemGroup>
 </Project>

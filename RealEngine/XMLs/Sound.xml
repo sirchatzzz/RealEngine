@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Root>
-	<Sound>
-		<Music name="Background" path="audio/GameMusic.mp3"/>
-		<Chunk name="Ding" path="audio/ding.mp3"/>
-		<Chunk name="Hit" path="audio/hit.mp3"/>
-	</Sound>
-</Root>
