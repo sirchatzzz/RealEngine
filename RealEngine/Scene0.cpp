@@ -21,6 +21,16 @@ bool Scene0::OnCreate() {
 	light = std::make_shared<LightActor>(nullptr, Vec3(0.0f, 0.0f, 0.0f));
 	XML.ReadConfig();
 
+	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
+		printf("Error. Failed to initialize audio. \n");
+		return false;
+	}
+
+	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+		printf("Error. Failed to open audio. \n");
+		return false;
+	}
+
 	//checker board
 	checkerBoard = std::make_shared<Actor>(nullptr);
 	checkerBoard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_Plane"));
@@ -91,8 +101,6 @@ bool Scene0::OnCreate() {
 		whiteCheckers.push_back(whiteCheckerPiece);
 	}
 
-
-
 	return true;
 }
 
@@ -103,6 +111,10 @@ void Scene0::OnDestroy() {
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 	switch( sdlEvent.type ) {
     case SDL_KEYDOWN:
+		if (SDL_SCANCODE_W) {
+			printf("Sound \n");
+			Mix_PlayChannel(-1, (assetManager->GetComponent<AudioComponent>("Ding").get()->GetSoundEffect()), 0);
+		}
 		break;
 
 	case SDL_MOUSEMOTION:
@@ -121,10 +133,7 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 
 void Scene0::Update(const float deltaTime) {
 	static float time = 0.0f;
-	time += deltaTime / 2.0f;
-	if (SDL_SCANCODE_W) {
-		Mix_FreeChunk(assetManager->GetComponent<AudioComponent>("Ding"));
-	}
+	time += deltaTime / 2.0f; 
 	checkerBoard->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(20.0f * cos(time), Vec3(0.0f, 1.0f, 1.0f)));
 }
 void Scene0::Render() const {
