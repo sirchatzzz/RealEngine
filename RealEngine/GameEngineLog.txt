@@ -1,4 +1,4 @@
-Tue Jun 20 13:47:04 2023
+Tue Jun 20 15:01:39 2023
 [INFO]: Starting the SceneManager
 [INFO]: OpenGL version: 4.6.0 NVIDIA 531.79
 [INFO]: Graphics card vendor NVIDIA Corporation
@@ -20,6 +20,3 @@ Tue Jun 20 13:47:04 2023
 "skullTexture" loc:4
 "viewMatrix" loc:1
 
-[INFO]: Deleting the SceneManager
-[INFO]: Deleting assets Scene0: 
-[INFO]: Deleted Scene0: 

@@ -14,14 +14,17 @@ using namespace tinyxml2;
 
 class AssetManager {
 private:
-	std::unordered_map<std::string, Ref<Component> > componentCatalog;
 	bool isCreated;
+	std::unordered_map<std::string, Ref<Component> > componentCatalog;
 	XMLDocument XML;
+	XMLElement* rootData;
+	XMLElement* assetsData;
 
 public:
 	AssetManager();
 	~AssetManager();
 	bool OnCreate();
+	void OnDestroy();
 
 	void RemoveAllComponents();
 	void ListAllComponents() const;

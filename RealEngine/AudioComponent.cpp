@@ -1,6 +1,7 @@
 #include "AudioComponent.h"
-AudioComponent::AudioComponent(Component* parent_, const char* filename_) :Component(parent_), isCreated(false), filename(nullptr), soundEffect(nullptr){
+AudioComponent::AudioComponent(Component* parent_, const char* filename_) :Component(parent_), isCreated(false), filename(nullptr){
     filename = filename_;
+	soundEffect = std::make_unique<Mix_Chunk*>(nullptr);
 }
 
 AudioComponent::~AudioComponent() { 
@@ -20,7 +21,7 @@ bool AudioComponent::OnCreate() {
 		isCreated = false;
 	}
 
-    soundEffect = Mix_LoadWAV(filename);
+    *soundEffect = Mix_LoadWAV(filename);
 	if (soundEffect == nullptr) printf("Cannot open sound file \n");
     return isCreated;
 }

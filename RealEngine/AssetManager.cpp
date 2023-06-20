@@ -1,6 +1,6 @@
 #include "AssetManager.h"
 
-AssetManager::AssetManager(): isCreated(false) {
+AssetManager::AssetManager(): isCreated(false), assetsData(nullptr), rootData(nullptr) {
 	ReadXML();
 
 	ListAllComponents();
@@ -9,7 +9,7 @@ AssetManager::AssetManager(): isCreated(false) {
 }
 
 AssetManager::~AssetManager() {
-	RemoveAllComponents();
+	OnDestroy();
 }
 
 bool AssetManager::OnCreate() {
@@ -20,6 +20,10 @@ bool AssetManager::OnCreate() {
 		}
 	}
 	return isCreated;
+}
+
+void AssetManager::OnDestroy() {
+	RemoveAllComponents();
 }
 
 void AssetManager::RemoveAllComponents() {
@@ -51,9 +55,9 @@ void AssetManager::ReadXML() {
 	std::string material = "Material";
 	std::string sound = "Sound";
 
-	XMLElement* rootData = XML.RootElement();
+	rootData = XML.RootElement();
 
-	XMLElement* assetsData = rootData->FirstChildElement("Assets");
+	assetsData = rootData->FirstChildElement("Assets");
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
 		if (child->Name() == mesh) {
