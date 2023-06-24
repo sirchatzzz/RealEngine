@@ -14,8 +14,8 @@ class SkyboxActor : public Actor {
 	const char* posZfilename;
 	const char* negZfilename;
 	GLuint textureID;
-	Ref<MeshComponent> cube;
-	Ref<ShaderComponent> shader;
+	Unq<MeshComponent> cube;
+	Unq<ShaderComponent> shader;
 public:
 	SkyboxActor(Component* parent_, const char* posXfilename_, const char* negXfilename_, const char* posYfilename_, const char* negYfilename_, const char* posZfilename_, const char* negZfilename_);
 	~SkyboxActor();
@@ -26,6 +26,6 @@ public:
 	void Render() const;
 
 	GLuint GetTextureID() const { return textureID; }
-	Ref<ShaderComponent> GetShader() { return shader; }
+	Unq<ShaderComponent>& GetShader() { return shader; }
 };
 

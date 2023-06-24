@@ -11,13 +11,14 @@ using namespace tinyxml2;
 
 class AudioComponent : public Component {
 	bool isCreated;
+	
+	Mix_Chunk* soundEffect;
 	const char* filename;
-	std::unique_ptr<Mix_Chunk*> soundEffect;
 
 public:
 	AudioComponent(Component* parent_, const char* filename_);
 	~AudioComponent();
-	Mix_Chunk* GetSoundEffect() { return *soundEffect; }
+	Mix_Chunk* GetSoundEffect() { return soundEffect; }
 	bool OnCreate() override;
 	void OnDestroy() override;
 };

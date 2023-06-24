@@ -15,10 +15,10 @@ SkyboxActor::~SkyboxActor() {
 }
 
 bool SkyboxActor::OnCreate() {
-	cube = std::make_shared<MeshComponent>(nullptr, "meshes/Cube.obj");
+	cube = std::make_unique<MeshComponent>(nullptr, "meshes/Cube.obj");
 	bool status = cube->OnCreate();
 
-	shader = std::make_shared<ShaderComponent>(nullptr, "shaders/skyboxVert.glsl", "shaders/skyboxFrag.glsl");
+	shader = std::make_unique<ShaderComponent>(nullptr, "shaders/skyboxVert.glsl", "shaders/skyboxFrag.glsl");
 	status = shader->OnCreate();
 
 	glGenTextures(1, &textureID);

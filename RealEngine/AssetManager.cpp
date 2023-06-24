@@ -50,38 +50,30 @@ void AssetManager::LoadXML() {
 void AssetManager::ReadXML() {
 	LoadXML();
 
-	std::string mesh = "Mesh";
-	std::string shader = "Shader";
-	std::string material = "Material";
-	std::string sound = "Sound";
-	std::string skybox = "Skybox";
-	std::string light = "Light";
-	std::string camera = "Camera";
-
 	rootData = XML.RootElement();
 
 	assetsData = rootData->FirstChildElement("Assets");
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
-		if (child->Name() == mesh) {
+		if (!strcmp(child->Name(), "Mesh")) {
 			AddComponent<MeshComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
 		}
-		if (child->Name() == shader) {
+		if (!strcmp(child->Name(), "Shader")) {
 			AddComponent<ShaderComponent>(child->Attribute("name"), nullptr, child->Attribute("vert"), child->Attribute("frag"));
 		}
-		if (child->Name() == material) {
+		if (!strcmp(child->Name(), "Material")) {
 			AddComponent<MaterialComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
 		}
-		if (child->Name() == sound) {
+		if (!strcmp(child->Name(), "Sound")) {
 			AddComponent<AudioComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
 		}
-		if (child->Name() == skybox) {
+		if (!strcmp(child->Name(), "Skybox")) {
 			AddComponent<SkyboxActor>(child->Attribute("name"), nullptr, child->Attribute("posX"), child->Attribute("negX"), child->Attribute("posY"), child->Attribute("negY"), child->Attribute("posZ"), child->Attribute("negZ"));
 		}
-		if (child->Name() == light) {
+		if (!strcmp(child->Name(), "Light")) {
 			AddComponent<LightActor>(child->Attribute("name"), nullptr, Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
 		}
-		if (child->Name() == camera) {
+		if (!strcmp(child->Name(), "Camera")) {
 			AddComponent<CameraActor>(child->Attribute("name"), nullptr);
 		}
 	}

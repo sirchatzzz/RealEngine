@@ -10,17 +10,19 @@ class CameraActor : public Actor {
 	CameraActor& operator= (const CameraActor&) = delete;
 	CameraActor& operator=(CameraActor&&) = delete;
 private:
+	Unq<Trackball> trackball;
+
 	Matrix4 projectionMatrix;
 	Matrix4 viewMatrix;
 	Matrix4 rotationMatrix;
 	Matrix4 translationMatrix;
-	Trackball *trackball;
 	unsigned int uboMatriciesID;
 	unsigned int bindingPoint;
 	bool isCreated;
 public:
 	CameraActor(Component* parent_);
 	~CameraActor();
+
 	virtual bool OnCreate() override;
 	virtual void OnDestroy() override;
 	virtual void Update(const float deltaTime) override;

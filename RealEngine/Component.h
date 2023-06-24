@@ -6,6 +6,9 @@
 template <typename T>
 using Ref = std::shared_ptr<T>;
 
+template <typename T>
+using Unq = std::unique_ptr<T>;
+
 
 class Component {
 public:

@@ -7,7 +7,7 @@
 using namespace MATH;
 CameraActor::CameraActor(Component* parent_) :Actor(parent_), uboMatriciesID(0), isCreated(false) {
 	bindingPoint = 0;
-	trackball = new Trackball();
+	trackball = std::make_unique<Trackball>();
 	viewMatrix = rotationMatrix * translationMatrix;
 }
 

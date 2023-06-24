@@ -105,7 +105,7 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
     case SDL_KEYDOWN:
 		if (SDL_SCANCODE_W) {
 			printf("Sound \n");
-			Mix_PlayChannel(-1, (assetManager->GetComponent<AudioComponent>("SE_Ding").get()->GetSoundEffect()), 0);
+			Mix_PlayChannel(-1, assetManager->GetComponent<AudioComponent>("SE_Ding")->GetSoundEffect(), 0);
 		}
 		break;
 

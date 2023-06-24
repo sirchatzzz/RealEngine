@@ -1,7 +1,6 @@
 #include "AudioComponent.h"
-AudioComponent::AudioComponent(Component* parent_, const char* filename_) :Component(parent_), isCreated(false), filename(nullptr){
-    filename = filename_;
-	soundEffect = std::make_unique<Mix_Chunk*>(nullptr);
+AudioComponent::AudioComponent(Component* parent_, const char* filename_) :Component(parent_), isCreated(false), filename(nullptr), soundEffect(nullptr){
+	filename = filename_;
 }
 
 AudioComponent::~AudioComponent() { 
@@ -12,7 +11,7 @@ bool AudioComponent::OnCreate() {
     if (isCreated) return isCreated;
 
 	if (SDL_Init(SDL_INIT_AUDIO) < 0) {
-		printf("Error. Failed to initialize audio. \n");
+		printf("Error. Failed to initialize SDL audio. \n");
 		isCreated = false;
 	}
 
@@ -21,9 +20,11 @@ bool AudioComponent::OnCreate() {
 		isCreated = false;
 	}
 
-    *soundEffect = Mix_LoadWAV(filename);
+    soundEffect = Mix_LoadWAV(filename);
 	if (soundEffect == nullptr) printf("Cannot open sound file \n");
     return isCreated;
 }
 
-void AudioComponent::OnDestroy() {/*making it concrete*/ }
+void AudioComponent::OnDestroy() {
+	Mix_FreeChunk(soundEffect);
+}
