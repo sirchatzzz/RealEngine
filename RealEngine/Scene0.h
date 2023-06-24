@@ -2,26 +2,24 @@
 #include <Vector.h>
 #include <Matrix.h>
 #include "Scene.h"
-#include "LightActor.h"
 #include "Actor.h"
 #include "Component.h"
 #include "MeshComponent.h"
 #include "MaterialComponent.h"
-#include "CameraActor.h"
 #include "ShaderComponent.h"
 #include "TransformComponent.h"
 #include "AssetManager.h"
 #include "ReadXML.h"
-#include "SkyboxActor.h"
 
 using namespace MATH;
 
 class Scene0 : public Scene {
 private:
-	Ref<AssetManager> assetManager;
-	Ref<Actor> checkerBoard;
 	std::vector<Ref<Actor>> redCheckers;
 	std::vector<Ref<Actor>> whiteCheckers;
+
+	Ref<AssetManager> assetManager;
+	Ref<Actor> checkerBoard;
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
 	Ref<SkyboxActor> skybox;

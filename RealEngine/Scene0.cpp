@@ -15,13 +15,18 @@ Scene0::~Scene0() {
 
 bool Scene0::OnCreate() {
 	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
+	XML.ReadConfig();
 
 	assetManager = std::make_shared<AssetManager>();
-	light = std::make_shared<LightActor>(nullptr, Vec3(0.0f, 0.0f, 0.0f));
-	XML.ReadConfig();
-	
-	skybox = std::make_shared<SkyboxActor>(nullptr, "skyboxes/nightSky/posX.png", "skyboxes/nightSky/negX.png", "skyboxes/nightSky/posY.png", "skyboxes/nightSky/negY.png", "skyboxes/nightSky/posY.png", "skyboxes/nightSky/negZ.png");
-	skybox->OnCreate();
+
+	light = assetManager->GetComponent<LightActor>("L_Default");
+	skybox = assetManager->GetComponent<SkyboxActor>("SB_CNTower");
+
+	//camera
+	camera = assetManager->GetComponent<CameraActor>("Camera");
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+	camera->UpdateViewMatrix();
+	camera->OnCreate();
 
 	//checker board
 	checkerBoard = std::make_shared<Actor>(nullptr);
@@ -32,12 +37,6 @@ bool Scene0::OnCreate() {
 	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
 	checkerBoard->AddComponent<AudioComponent>(assetManager->GetComponent<AudioComponent>("SE_Ding"));
 	checkerBoard->OnCreate();
-
-	//camera
-	camera = std::make_shared<CameraActor>(nullptr);
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-	camera->UpdateViewMatrix();
-	camera->OnCreate();
 
 	float xPos = -3.2f;
 	float yPos = 4.5f;

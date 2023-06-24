@@ -14,7 +14,7 @@ AssetManager::~AssetManager() {
 
 bool AssetManager::OnCreate() {
 	if (isCreated) return isCreated;
-	for (std::pair<std::string, Ref<Component>> c : componentCatalog) {
+	for (std::pair<std::string, Ref<Component>> c : assetsCatalog) {
 		if (!c.second->OnCreate()) {
 			isCreated = false;
 		}
@@ -27,12 +27,12 @@ void AssetManager::OnDestroy() {
 }
 
 void AssetManager::RemoveAllComponents() {
-	componentCatalog.clear();
+	assetsCatalog.clear();
 }
 
 void AssetManager::ListAllComponents() const {
 	std::cout <<"\n"<< typeid(*this).name() << " contain the following components:\n";
-	for (auto c : componentCatalog) {
+	for (auto c : assetsCatalog) {
 		std::cout <<"\t" << c.first << ": " << typeid(*(c.second.get())).name() << "\n";
 	}
 	std::cout << "\n";
@@ -54,6 +54,9 @@ void AssetManager::ReadXML() {
 	std::string shader = "Shader";
 	std::string material = "Material";
 	std::string sound = "Sound";
+	std::string skybox = "Skybox";
+	std::string light = "Light";
+	std::string camera = "Camera";
 
 	rootData = XML.RootElement();
 
@@ -71,6 +74,15 @@ void AssetManager::ReadXML() {
 		}
 		if (child->Name() == sound) {
 			AddComponent<AudioComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
+		}
+		if (child->Name() == skybox) {
+			AddComponent<SkyboxActor>(child->Attribute("name"), nullptr, child->Attribute("posX"), child->Attribute("negX"), child->Attribute("posY"), child->Attribute("negY"), child->Attribute("posZ"), child->Attribute("negZ"));
+		}
+		if (child->Name() == light) {
+			AddComponent<LightActor>(child->Attribute("name"), nullptr, Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
+		}
+		if (child->Name() == camera) {
+			AddComponent<CameraActor>(child->Attribute("name"), nullptr);
 		}
 	}
 }
