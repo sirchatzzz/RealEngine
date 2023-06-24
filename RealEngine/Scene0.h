@@ -12,6 +12,7 @@
 #include "TransformComponent.h"
 #include "AssetManager.h"
 #include "ReadXML.h"
+#include "SkyboxActor.h"
 
 using namespace MATH;
 
@@ -23,6 +24,7 @@ private:
 	std::vector<Ref<Actor>> whiteCheckers;
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
+	Ref<SkyboxActor> skybox;
 	ReadXML XML;
 
 public:

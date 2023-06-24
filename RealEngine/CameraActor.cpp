@@ -5,8 +5,10 @@
 #include "TransformComponent.h"
 #include "UBO_Padding.h"
 using namespace MATH;
-CameraActor::CameraActor(Component* parent_) :Actor(parent_), uboMatriciesID(0), isCreated(0) {
+CameraActor::CameraActor(Component* parent_) :Actor(parent_), uboMatriciesID(0), isCreated(false) {
 	bindingPoint = 0;
+	trackball = new Trackball();
+	viewMatrix = rotationMatrix * translationMatrix;
 }
 
 CameraActor::~CameraActor() {
@@ -39,9 +41,13 @@ void CameraActor::Update(const float deltaTime) {
 
 }
 
+void CameraActor::HandleEvents(const SDL_Event& sdlEvent) {
+	trackball->HandleEvents(sdlEvent);
+	rotationMatrix = trackball->getMatrix4();
+	viewMatrix = rotationMatrix * translationMatrix;
+}
+
 void CameraActor::Render() const {
-
-
 }
 
 void CameraActor::UpdateProjectionMatrix(const float fovy, const float aspectRatio, const float near, const float far) {

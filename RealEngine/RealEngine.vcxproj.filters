@@ -87,6 +87,12 @@
     <ClCompile Include="AudioComponent.cpp">
       <Filter>Source Files\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Trackball.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SkyboxActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug.h">
@@ -155,6 +161,12 @@
     <ClInclude Include="AudioComponent.h">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
+    <ClInclude Include="Trackball.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyboxActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameEngineLog.txt">
@@ -172,6 +184,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\textureVert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\skyboxFrag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\skyboxVert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

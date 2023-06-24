@@ -19,6 +19,9 @@ bool Scene0::OnCreate() {
 	assetManager = std::make_shared<AssetManager>();
 	light = std::make_shared<LightActor>(nullptr, Vec3(0.0f, 0.0f, 0.0f));
 	XML.ReadConfig();
+	
+	skybox = std::make_shared<SkyboxActor>(nullptr, "skyboxes/nightSky/posX.png", "skyboxes/nightSky/negX.png", "skyboxes/nightSky/posY.png", "skyboxes/nightSky/negY.png", "skyboxes/nightSky/posY.png", "skyboxes/nightSky/negZ.png");
+	skybox->OnCreate();
 
 	//checker board
 	checkerBoard = std::make_shared<Actor>(nullptr);
@@ -98,6 +101,7 @@ void Scene0::OnDestroy() {
 }
 
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
+	camera->HandleEvents(sdlEvent);
 	switch( sdlEvent.type ) {
     case SDL_KEYDOWN:
 		if (SDL_SCANCODE_W) {
@@ -127,16 +131,26 @@ void Scene0::Update(const float deltaTime) {
 }
 void Scene0::Render() const {
 	/// Set the background color then clear the screen
+
+	Ref<ShaderComponent> shaderComponent = checkerBoard->GetComponent<ShaderComponent>();
+
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glUseProgram(skybox->GetShader()->GetProgram());
+	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+	skybox->Render();
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
-	Ref<ShaderComponent> shaderComponent = checkerBoard->GetComponent<ShaderComponent>();
 
 	glUseProgram(shaderComponent->GetProgram());
 	glBindTexture(GL_TEXTURE_2D, checkerBoard->GetComponent<MaterialComponent>()->getTextureID());
 	glUniformMatrix4fv(shaderComponent->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(shaderComponent->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetViewMatrix());
+	glUniformMatrix4fv(shaderComponent->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
 
 	glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
 	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
