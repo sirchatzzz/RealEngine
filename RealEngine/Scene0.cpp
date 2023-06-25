@@ -19,7 +19,6 @@ bool Scene0::OnCreate() {
 
 	assetManager = std::make_shared<AssetManager>();
 
-	light = assetManager->GetComponent<LightActor>("L_Default");
 	skybox = assetManager->GetComponent<SkyboxActor>("SB_CNTower");
 
 	//camera
@@ -28,10 +27,14 @@ bool Scene0::OnCreate() {
 	camera->UpdateViewMatrix();
 	camera->OnCreate();
 
+	//light
+	light = assetManager->GetComponent<LightActor>("L_Default");
+	light->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+
 	//checker board
 	checkerBoard = std::make_shared<Actor>(nullptr);
 	checkerBoard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_Plane"));
-	checkerBoard->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("S_Texture"));
+	checkerBoard->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("S_Phong"));
 	checkerBoard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	checkerBoard->AddComponent<CameraActor>(nullptr);
 	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
@@ -150,6 +153,7 @@ void Scene0::Render() const {
 	glBindTexture(GL_TEXTURE_2D, checkerBoard->GetComponent<MaterialComponent>()->getTextureID());
 	glUniformMatrix4fv(shaderComponent->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
 	glUniformMatrix4fv(shaderComponent->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniform3fv(shaderComponent->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
 
 	glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
 	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);

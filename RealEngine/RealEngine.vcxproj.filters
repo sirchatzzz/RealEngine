@@ -186,16 +186,16 @@
     <None Include="shaders\defaultVert.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\textureFrag.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shaders\textureVert.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="shaders\skyboxFrag.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\skyboxVert.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\phongFrag.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="shaders\phongVert.glsl">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

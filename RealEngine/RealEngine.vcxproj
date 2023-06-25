@@ -179,10 +179,10 @@
   <ItemGroup>
     <None Include="shaders\defaultFrag.glsl" />
     <None Include="shaders\defaultVert.glsl" />
+    <None Include="shaders\phongFrag.glsl" />
+    <None Include="shaders\phongVert.glsl" />
     <None Include="shaders\skyboxFrag.glsl" />
     <None Include="shaders\skyboxVert.glsl" />
-    <None Include="shaders\textureFrag.glsl" />
-    <None Include="shaders\textureVert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="XMLs\AssetManager.xml" />
