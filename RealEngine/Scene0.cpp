@@ -32,16 +32,6 @@ bool Scene0::OnCreate() {
 	light = assetManager->GetComponent<LightActor>("L_Default");
 	light->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
 
-	//checker board
-	checkerBoard = std::make_shared<Actor>(nullptr);
-	checkerBoard->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_Plane"));
-	checkerBoard->AddComponent<ShaderComponent>(assetManager->GetComponent<ShaderComponent>("S_Phong"));
-	checkerBoard->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-	checkerBoard->AddComponent<CameraActor>(nullptr);
-	checkerBoard->AddComponent<TransformComponent>(nullptr, XML.GetBoardPosition(), XML.GetBoardOrientation(), XML.GetBoardScale());
-	checkerBoard->AddComponent<AudioComponent>(assetManager->GetComponent<AudioComponent>("SE_Ding"));
-	checkerBoard->OnCreate();
-
 	float xPos = -3.2f;
 	float yPos = 4.5f;
 
@@ -61,39 +51,12 @@ bool Scene0::OnCreate() {
 
 		redCheckerPiece->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_CheckerPiece"));
 		redCheckerPiece->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_RedChecker"));
-		redCheckerPiece->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.0f), Quaternion(), Vec3(0.15f, 0.15f, 0.1f));
+		redCheckerPiece->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, -20.0f), Quaternion(), Vec3(0.15f, 0.15f, 0.1f));
 		redCheckerPiece->OnCreate();
 
 		xPos += 2.5f;
 
 		redCheckers.push_back(redCheckerPiece);
-	}
-
-	xPos = -4.4f;
-	yPos = -4.3f;
-
-	//white checkers
-	for (int i = 0; i < 12; ++i) {
-
-		if (i == 4) {
-			xPos = -3.2f;
-			yPos = -3.0f;
-		}
-		if (i == 8) {
-			xPos = -4.4f;
-			yPos = -1.8f;
-		}
-
-		auto whiteCheckerPiece = std::make_shared<Actor>(nullptr);
-
-		whiteCheckerPiece->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>("SM_CheckerPiece"));
-		whiteCheckerPiece->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>("M_WhiteChecker"));
-		whiteCheckerPiece->AddComponent<TransformComponent>(nullptr, Vec3(xPos, yPos, 0.0f), Quaternion(), Vec3(0.15f, 0.15f, 0.1f));
-		whiteCheckerPiece->OnCreate();
-
-		xPos += 2.5f;
-
-		whiteCheckers.push_back(whiteCheckerPiece);
 	}
 
 	return true;
@@ -106,8 +69,8 @@ void Scene0::OnDestroy() {
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 	static Vec2 currentMousePos;
 	static Vec2 lastMousePos;
-	unsigned int objID;
-	camera->HandleEvents(sdlEvent);
+	unsigned int objID = -1;
+	//camera->HandleEvents(sdlEvent);
 	switch( sdlEvent.type ) {
     case SDL_KEYDOWN:
 		break;
@@ -115,17 +78,11 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 	case SDL_MOUSEMOTION:
 		break;
 
-	case SDL_MOUSEBUTTONDOWN:   
-		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
-		lastMousePos = currentMousePos;
+	case SDL_MOUSEBUTTONDOWN:
+		break;
 
-		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
-		printf("0x%X %d\n", objID, objID);
-
-		break; 
-
-	case SDL_MOUSEBUTTONUP:     
-	break;
+	case SDL_MOUSEBUTTONUP:   
+		break;
 
 	default:
 		break;
@@ -149,18 +106,11 @@ int Scene0::Pick(int x, int y) {
 	glUniformMatrix4fv(shader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
 	glUniformMatrix4fv(shader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
 
-	glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
-	glUniform1ui(shader->GetUniformID("colorID"), 0xff);
-	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-
 	for (GLuint i = 0; i < redCheckers.size(); i++) {
-		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * redCheckers[i]->getModelMatrix());
+		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
 		glUniform1ui(shader->GetUniformID("colorID"), i);
-		printf("%d \n", i);
 		redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
-
-
 
 	glUseProgram(0);
 
@@ -191,24 +141,14 @@ void Scene0::Render() const {
 	glEnable(GL_CULL_FACE);
 
 	glUseProgram(shaderComponent->GetProgram());
-	glBindTexture(GL_TEXTURE_2D, checkerBoard->GetComponent<MaterialComponent>()->getTextureID());
 	glUniformMatrix4fv(shaderComponent->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
 	glUniformMatrix4fv(shaderComponent->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
 	glUniform3fv(shaderComponent->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
 
-	glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
-	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-
 	for (unsigned int i = 0; i < redCheckers.size(); ++i) {
 		glBindTexture(GL_TEXTURE_2D, redCheckers[i]->GetComponent<MaterialComponent>()->getTextureID());
-		glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * redCheckers[i]->getModelMatrix());
+		glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
 		redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-	}
-
-	for (unsigned int i = 0; i < whiteCheckers.size(); ++i) {
-		glBindTexture(GL_TEXTURE_2D, whiteCheckers[i]->GetComponent<MaterialComponent>()->getTextureID());
-		glUniformMatrix4fv(shaderComponent->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * whiteCheckers[i]->getModelMatrix());
-		whiteCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
 
 	glUseProgram(0);

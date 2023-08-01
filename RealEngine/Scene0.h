@@ -16,10 +16,8 @@ using namespace MATH;
 class Scene0 : public Scene {
 private:
 	std::vector<Ref<Actor>> redCheckers;
-	std::vector<Ref<Actor>> whiteCheckers;
 
 	Ref<AssetManager> assetManager;
-	Ref<Actor> checkerBoard;
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
 	Ref<SkyboxActor> skybox;

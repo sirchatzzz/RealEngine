@@ -1,4 +1,4 @@
-Tue Aug  1 13:49:26 2023
+Tue Aug  1 14:39:10 2023
 [INFO]: Starting the SceneManager
 [INFO]: OpenGL version: 4.6.0 NVIDIA 531.79
 [INFO]: Graphics card vendor NVIDIA Corporation
@@ -27,13 +27,6 @@ Tue Aug  1 13:49:26 2023
 [INFO]: Uniforms:
 "projectionMatrix" loc:0
 "skyBoxTexture" loc:2
-"viewMatrix" loc:1
-
-[INFO]: Uniforms:
-"lightPos" loc:3
-"modelMatrix" loc:2
-"projectionMatrix" loc:0
-"skullTexture" loc:4
 "viewMatrix" loc:1
 
 [INFO]: Deleting the SceneManager
