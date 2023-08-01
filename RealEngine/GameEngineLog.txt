@@ -1,8 +1,8 @@
-Sun Jun 25 14:26:54 2023
+Tue Aug  1 13:49:26 2023
 [INFO]: Starting the SceneManager
-[INFO]: OpenGL version: 4.6.0 NVIDIA 517.48
+[INFO]: OpenGL version: 4.6.0 NVIDIA 531.79
 [INFO]: Graphics card vendor NVIDIA Corporation
-[INFO]: Graphics card name NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2
+[INFO]: Graphics card name NVIDIA GeForce RTX 4050 Laptop GPU/PCIe/SSE2
 [INFO]: GLSL Version 4.60 NVIDIA
 [INFO]: Created Scene0: 
 [INFO]: Loading assets Scene0: 
@@ -11,6 +11,12 @@ Sun Jun 25 14:26:54 2023
 "modelMatrix" loc:2
 "projectionMatrix" loc:0
 "skullTexture" loc:4
+"viewMatrix" loc:1
+
+[INFO]: Uniforms:
+"colorID" loc:3
+"modelMatrix" loc:2
+"projectionMatrix" loc:0
 "viewMatrix" loc:1
 
 [INFO]: Uniforms:

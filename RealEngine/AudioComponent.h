@@ -11,7 +11,6 @@ using namespace tinyxml2;
 
 class AudioComponent : public Component {
 	bool isCreated;
-	
 	Mix_Chunk* soundEffect;
 	const char* filename;
 

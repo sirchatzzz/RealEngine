@@ -9,6 +9,7 @@
 #include "TransformComponent.h"
 #include "AssetManager.h"
 #include "ReadXML.h"
+#include "Core.h"
 
 using namespace MATH;
 
@@ -23,11 +24,13 @@ private:
 	Ref<LightActor>light;
 	Ref<SkyboxActor> skybox;
 	ReadXML XML;
+	ViewPort viewport;
 
 public:
 	explicit Scene0();
 	virtual ~Scene0();
 
+	int Pick(int x, int y);
 	virtual bool OnCreate() override;
 	virtual void OnDestroy() override;
 	virtual void Update(const float deltaTime) override;

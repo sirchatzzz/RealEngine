@@ -56,12 +56,11 @@ void SceneManager::Run() {
 	timer->Start();
 	isRunning = true;
 	while (isRunning) {
-		HandleEvents();
 		timer->UpdateFrameTicks();
 		currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
-		
 		SDL_GL_SwapWindow(window->getWindow());
+		HandleEvents();
 		SDL_Delay(timer->GetSleepTime(fps));
 	}
 }

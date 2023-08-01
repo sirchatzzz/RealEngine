@@ -99,6 +99,9 @@
     <ClCompile Include="SkyboxActor.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
+    <ClCompile Include="Core.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Debug.h">
@@ -173,6 +176,9 @@
     <ClInclude Include="SkyboxActor.h">
       <Filter>Header Files\Actors</Filter>
     </ClInclude>
+    <ClInclude Include="Core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="GameEngineLog.txt">
@@ -180,10 +186,10 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\defaultFrag.glsl">
+    <None Include="shaders\colorPickerFrag.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="shaders\defaultVert.glsl">
+    <None Include="shaders\colorPickerVert.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="shaders\skyboxFrag.glsl">

@@ -41,6 +41,8 @@ Matrix4 Actor::getModelMatrix() {
 	Ref<TransformComponent> transformComponent = GetComponent<TransformComponent>();
 		if (transformComponent != nullptr) {
 			return  transformComponent->GetTransformMatrix();
-	}
+		}
+		if (parent) modelMatrix = dynamic_cast<Actor*>(parent)->getModelMatrix() * modelMatrix;
+
 		return modelMatrix;
 }

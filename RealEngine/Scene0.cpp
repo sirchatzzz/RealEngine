@@ -7,6 +7,7 @@
 
 Scene0::Scene0(){
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
+	glGetIntegerv(GL_VIEWPORT, viewport);
 }
 
 Scene0::~Scene0() {
@@ -19,7 +20,7 @@ bool Scene0::OnCreate() {
 
 	assetManager = std::make_shared<AssetManager>();
 
-	skybox = assetManager->GetComponent<SkyboxActor>("SB_CNTower");
+	skybox = assetManager->GetComponent<SkyboxActor>("SB_NightSky");
 
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
@@ -103,22 +104,27 @@ void Scene0::OnDestroy() {
 }
 
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
+	static Vec2 currentMousePos;
+	static Vec2 lastMousePos;
+	unsigned int objID;
 	camera->HandleEvents(sdlEvent);
 	switch( sdlEvent.type ) {
     case SDL_KEYDOWN:
-		if (SDL_SCANCODE_W) {
-			printf("Sound \n");
-			Mix_PlayChannel(-1, assetManager->GetComponent<AudioComponent>("SE_Ding")->GetSoundEffect(), 0);
-		}
 		break;
 
 	case SDL_MOUSEMOTION:
 		break;
 
-	case SDL_MOUSEBUTTONDOWN:              
+	case SDL_MOUSEBUTTONDOWN:   
+		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
+		lastMousePos = currentMousePos;
+
+		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
+		printf("0x%X %d\n", objID, objID);
+
 		break; 
 
-	case SDL_MOUSEBUTTONUP:            
+	case SDL_MOUSEBUTTONUP:     
 	break;
 
 	default:
@@ -129,12 +135,47 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 void Scene0::Update(const float deltaTime) {
 	static float time = 0.0f;
 	time += deltaTime / 2.0f; 
-	checkerBoard->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(20.0f * cos(time), Vec3(0.0f, 1.0f, 1.0f)));
+	//checkerBoard->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(20.0f * cos(time), Vec3(0.0f, 1.0f, 1.0f)));
 }
+
+int Scene0::Pick(int x, int y) {
+	glDisable(GL_DEPTH_TEST);
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF
+	glClear(GL_COLOR_BUFFER_BIT);
+	//glBindBuffer(GL_UNIFORM_BUFFER, camera->GetMatriciesID());
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("S_ColorPicker");
+	glUseProgram(shader->GetProgram());
+
+	glUniformMatrix4fv(shader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+
+	glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix());
+	glUniform1ui(shader->GetUniformID("colorID"), 0xff);
+	checkerBoard->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+
+	for (GLuint i = 0; i < redCheckers.size(); i++) {
+		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, checkerBoard->getModelMatrix() * redCheckers[i]->getModelMatrix());
+		glUniform1ui(shader->GetUniformID("colorID"), i);
+		printf("%d \n", i);
+		redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	}
+
+
+
+	glUseProgram(0);
+
+	GLuint colorIndex;
+	glReadPixels(x, viewport.height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &colorIndex);
+	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
+	printf("%x", colorIndex);
+	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
+	else return colorIndex;
+}
+
 void Scene0::Render() const {
 	/// Set the background color then clear the screen
 
-	Ref<ShaderComponent> shaderComponent = checkerBoard->GetComponent<ShaderComponent>();
+	Ref<ShaderComponent> shaderComponent = assetManager->GetComponent<ShaderComponent>("S_Phong");
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -172,7 +213,3 @@ void Scene0::Render() const {
 
 	glUseProgram(0);
 }
-
-
-
-	

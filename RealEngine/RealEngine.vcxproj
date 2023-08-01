@@ -129,6 +129,7 @@
     <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="AudioComponent.cpp" />
     <ClCompile Include="CameraActor.cpp" />
+    <ClCompile Include="Core.cpp" />
     <ClCompile Include="Debug.cpp" />
     <ClCompile Include="LightActor.cpp" />
     <ClCompile Include="MaterialComponent.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="AudioComponent.h" />
     <ClInclude Include="CameraActor.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Core.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="LightActor.h" />
     <ClInclude Include="MaterialComponent.h" />
@@ -177,8 +179,8 @@
     <Text Include="GameEngineLog.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="shaders\defaultFrag.glsl" />
-    <None Include="shaders\defaultVert.glsl" />
+    <None Include="shaders\colorPickerFrag.glsl" />
+    <None Include="shaders\colorPickerVert.glsl" />
     <None Include="shaders\phongFrag.glsl" />
     <None Include="shaders\phongVert.glsl" />
     <None Include="shaders\skyboxFrag.glsl" />
