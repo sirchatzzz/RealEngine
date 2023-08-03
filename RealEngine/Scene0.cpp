@@ -79,6 +79,12 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 		break;
 
 	case SDL_MOUSEBUTTONDOWN:
+
+		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
+		lastMousePos = currentMousePos;
+
+		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
+		printf("0x%X %d\n", objID, objID);
 		break;
 
 	case SDL_MOUSEBUTTONUP:   
@@ -117,7 +123,6 @@ int Scene0::Pick(int x, int y) {
 	GLuint colorIndex;
 	glReadPixels(x, viewport.height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &colorIndex);
 	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
-	printf("%x", colorIndex);
 	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
 	else return colorIndex;
 }
