@@ -8,7 +8,6 @@
 #include "ShaderComponent.h"
 #include "TransformComponent.h"
 #include "AssetManager.h"
-#include "ReadXML.h"
 #include "Core.h"
 
 using namespace MATH;
@@ -21,7 +20,6 @@ private:
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
 	Ref<SkyboxActor> skybox;
-	ReadXML XML;
 	ViewPort viewport;
 
 public:
