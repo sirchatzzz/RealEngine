@@ -179,8 +179,10 @@
   <ItemGroup>
     <None Include="shaders\colorPickerFrag.glsl" />
     <None Include="shaders\colorPickerVert.glsl" />
-    <None Include="shaders\phongFrag.glsl" />
-    <None Include="shaders\phongVert.glsl" />
+    <None Include="shaders\shadowFrag.glsl" />
+    <None Include="shaders\shadowPhongFrag.glsl" />
+    <None Include="shaders\shadowPhongVert.glsl" />
+    <None Include="shaders\shadowVert.glsl" />
     <None Include="shaders\skyboxFrag.glsl" />
     <None Include="shaders\skyboxVert.glsl" />
   </ItemGroup>

@@ -5,7 +5,7 @@
 #include "Scene0.h"
 #include "Debug.h"
 
-Scene0::Scene0(){
+Scene0::Scene0() : shadowMap(0), shadowMapFBO(0){
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
 }
@@ -23,13 +23,31 @@ bool Scene0::OnCreate() {
 
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -10.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -15.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
 	camera->UpdateViewMatrix();
 	camera->OnCreate();
 
 	//light
 	light = assetManager->GetComponent<LightActor>("L_Default");
-	light->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, 0.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+	light->AddComponent<TransformComponent>(nullptr, Vec3(-10.0f, 4.0f, 6.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+
+	//plane
+	plane = std::make_shared<Actor>(nullptr);
+	plane->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Plane"));
+	plane->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -6.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
+	plane->OnCreate();
+
+	//sphere
+	sphere = std::make_shared<Actor>(nullptr);
+	sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
+	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
+	sphere->OnCreate();
+
+	Matrix4 projectionMatrix = MMath::perspective(45.0f, (16.0f / 9.0f), 0.5f, 100.0f);
+	Matrix4 lightTranslation = MMath::lookAt(Vec3(-10.0f, 4.0f, 6.0f), Vec3(0.0f, 0.0f, 0.0f), Vec3(-1.0f, -1.0f, 1.0f));
+	lightSpaceMatrix = projectionMatrix * lightTranslation;
+
+	CreateBuffer();
 
 	return true;
 }
@@ -42,7 +60,6 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
 	static Vec2 currentMousePos;
 	static Vec2 lastMousePos;
 	unsigned int objID = -1;
-	//camera->HandleEvents(sdlEvent);
 	switch( sdlEvent.type ) {
     case SDL_KEYDOWN:
 		break;
@@ -67,27 +84,75 @@ void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
     }
 }
 
+void Scene0::CreateBuffer()
+{
+
+	glGenFramebuffers(1, &shadowMapFBO);
+	glGenTextures(1, &shadowMap);
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
+		4096, 4096, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0);
+
+	glDrawBuffer(GL_NONE);
+	glReadBuffer(GL_NONE);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+}
+
+void Scene0::RenderShadowMap()
+{
+
+	Ref<ShaderComponent> shadowShader = assetManager->GetComponent<ShaderComponent>("S_Shadow");
+	glCullFace(GL_FRONT);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glViewport(0, 0, 4096, 4096);
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	glActiveTexture(GL_TEXTURE0);
+	glUseProgram(shadowShader->GetProgram());
+
+	glUniformMatrix4fv(shadowShader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, lightSpaceMatrix);
+
+	glUniformMatrix4fv(shadowShader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
+	sphere->GetComponent<MeshComponent>()->Render();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCullFace(GL_BACK);
+
+}
+
 void Scene0::Update(const float deltaTime) {
 	static float time = 0.0f;
 	time += deltaTime / 2.0f; 
-	//checkerBoard->GetComponent<TransformComponent>()->SetOrientation(QMath::angleAxisRotation(20.0f * cos(time), Vec3(0.0f, 1.0f, 1.0f)));
+	RenderShadowMap();
 }
 
 int Scene0::Pick(int x, int y) {
 	glDisable(GL_DEPTH_TEST);
 	glClearColor(1.0f, 1.0f, 1.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF
 	glClear(GL_COLOR_BUFFER_BIT);
-	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("S_ColorPicker");
-	glUseProgram(shader->GetProgram());
+	Ref<ShaderComponent> colorPickerShader = assetManager->GetComponent<ShaderComponent>("S_ColorPicker");
+	glUseProgram(colorPickerShader->GetProgram());
 
-	glUniformMatrix4fv(shader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(shader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniformMatrix4fv(colorPickerShader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(colorPickerShader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
 
-	for (GLuint i = 0; i < redCheckers.size(); i++) {
-		glUniformMatrix4fv(shader->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
-		glUniform1ui(shader->GetUniformID("colorID"), i);
-		redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-	}
+	//for (GLuint i = 0; i < redCheckers.size(); i++) {
+	//	glUniformMatrix4fv(colorPickerShader->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
+	//	glUniform1ui(colorPickerShader->GetUniformID("colorID"), i);
+	//	redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	//}
 
 	glUseProgram(0);
 
@@ -99,10 +164,10 @@ int Scene0::Pick(int x, int y) {
 }
 
 void Scene0::Render() const {
-	/// Set the background color then clear the screen
 
-	Ref<ShaderComponent> shaderComponent = assetManager->GetComponent<ShaderComponent>("S_Phong");
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("S_ShadowPhong");
 
+	glViewport(0, 0, 1280, 720);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -114,12 +179,21 @@ void Scene0::Render() const {
 	skybox->Render();
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
 
-	glUseProgram(shaderComponent->GetProgram());
-	glUniformMatrix4fv(shaderComponent->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(shaderComponent->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
-	glUniform3fv(shaderComponent->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
+	glUseProgram(shader->GetProgram());
+	glUniformMatrix4fv(shader->GetUniformID("projection"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("view"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, lightSpaceMatrix);
+	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
+	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());
+
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+
+	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, plane->getModelMatrix());
+	plane->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+
+	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
+	sphere->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
 	glUseProgram(0);
 }

@@ -14,13 +14,17 @@ using namespace MATH;
 
 class Scene0 : public Scene {
 private:
-	std::vector<Ref<Actor>> redCheckers;
 
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
 	Ref<SkyboxActor> skybox;
+	Ref<Actor> plane, sphere;
 	ViewPort viewport;
+	Matrix4 lightSpaceMatrix;
+
+	GLuint shadowMapFBO;
+	GLuint shadowMap;
 
 public:
 	explicit Scene0();
@@ -32,4 +36,6 @@ public:
 	virtual void Update(const float deltaTime) override;
 	virtual void Render() const override;
 	virtual void HandleEvents(const SDL_Event &sdlEvent) override;
+	void CreateBuffer();
+	void RenderShadowMap();
 };

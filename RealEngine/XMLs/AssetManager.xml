@@ -6,7 +6,8 @@
 		<Mesh name ="SM_Sphere" path ="meshes/Sphere.obj"/>
 		<Mesh name ="SM_Mario" path ="meshes/Mario.obj"/>
 		<Mesh name ="SM_Cube" path ="meshes/Cube.obj"/>
-		<Shader name ="S_Phong" vert ="shaders/phongVert.glsl" frag ="shaders/phongFrag.glsl"/>
+		<Shader name ="S_ShadowPhong" vert ="shaders/shadowPhongVert.glsl" frag ="shaders/shadowPhongFrag.glsl"/>
+		<Shader name ="S_Shadow" vert ="shaders/shadowVert.glsl" frag ="shaders/shadowFrag.glsl"/>
 		<Shader name ="S_ColorPicker" vert ="shaders/colorPickerVert.glsl" frag ="shaders/colorPickerFrag.glsl"/>
 		<Material name ="M_CheckerBoard" path ="textures/8x8_checkered_board.png"/>
 		<Material name ="M_WhiteChecker" path ="textures/whiteCheckerPiece.png"/>
