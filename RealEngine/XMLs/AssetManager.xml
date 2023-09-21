@@ -17,7 +17,7 @@
 		<Sound name ="SE_Ding" path ="sound/ding.mp3"/>
 		<Sound name ="SE_Hit" path ="sound/hit.mp3"/>
 		<Camera name ="Camera"/>
-		<Light name ="L_Default" x="0.0" y="0.0" z="0.0"/>
+		<Light name ="L_Point"/>
 		<Skybox name ="SB_CNTower" posX ="skyboxes/cnTower/posX.jpg" negX ="skyboxes/cnTower/negX.jpg" posY ="skyboxes/cnTower/posY.jpg" negY ="skyboxes/cnTower/negY.jpg" posZ ="skyboxes/cnTower/posZ.jpg" negZ ="skyboxes/cnTower/negZ.jpg"/>
 		<Skybox name ="SB_NightSky" posX ="skyboxes/nightSky/posX.png" negX ="skyboxes/nightSky/negX.png" posY ="skyboxes/nightSky/posY.png" negY ="skyboxes/nightSky/negY.png" posZ ="skyboxes/nightSky/posZ.png" negZ ="skyboxes/nightSky/negZ.png"/>
     </Assets>

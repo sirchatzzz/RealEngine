@@ -6,14 +6,15 @@ class LightActor : public Actor {
 	LightActor& operator = (const LightActor&) = delete;
 	LightActor& operator = (LightActor&) = delete;
 public:
-	LightActor(Component* parent_, const Vec3 &pos_);
+	LightActor(Component* parent_);
 	void OnDestroy() override;
 	bool OnCreate() override;
-	Vec3 getPosition() { return pos; }
+	Vec3 GetPosition() { return position; }
+	void UpdatePosition(Vec3 pos_);
+	Matrix4 GetLightSpaceMatrix() { return lightSpaceMatrix; }
 private:
-	Vec3 pos;
-	Vec4 color;
-	float intensity;
-	Vec3 falOff;
+	bool isCreated;
+	Vec3 position;
+	Matrix4 lightSpaceMatrix;
 };
 

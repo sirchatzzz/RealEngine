@@ -71,7 +71,7 @@ void AssetManager::ReadXML() {
 			AddComponent<SkyboxActor>(child->Attribute("name"), nullptr, child->Attribute("posX"), child->Attribute("negX"), child->Attribute("posY"), child->Attribute("negY"), child->Attribute("posZ"), child->Attribute("negZ"));
 		}
 		if (!strcmp(child->Name(), "Light")) {
-			AddComponent<LightActor>(child->Attribute("name"), nullptr, Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
+			AddComponent<LightActor>(child->Attribute("name"), nullptr);
 		}
 		if (!strcmp(child->Name(), "Camera")) {
 			AddComponent<CameraActor>(child->Attribute("name"), nullptr);

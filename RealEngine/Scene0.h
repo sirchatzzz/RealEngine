@@ -21,7 +21,6 @@ private:
 	Ref<SkyboxActor> skybox;
 	Ref<Actor> plane, sphere;
 	ViewPort viewport;
-	Matrix4 lightSpaceMatrix;
 
 	GLuint shadowMapFBO;
 	GLuint shadowMap;

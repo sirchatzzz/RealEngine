@@ -41,8 +41,8 @@ public:
 		assetsCatalog[name] = t;
 	}
 
-	template<typename ComponentTemplate>
-	Ref<ComponentTemplate> GetComponent(std::string name) const {
+	template<typename ComponentTemplate, typename ... Args>
+	Ref<ComponentTemplate> GetComponent(std::string name, Args&& ... args_) const {
 		auto id = assetsCatalog.find(name);
 #ifdef _DEBUG
 		if (id == assetsCatalog.end()) {
