@@ -10,6 +10,7 @@
 		<Shader name ="S_Shadow" vert ="shaders/shadowVert.glsl" frag ="shaders/shadowFrag.glsl"/>
 		<Shader name ="S_ColorPicker" vert ="shaders/colorPickerVert.glsl" frag ="shaders/colorPickerFrag.glsl"/>
 		<Material name ="M_CheckerBoard" path ="textures/8x8_checkered_board.png"/>
+		<Material name ="M_EvilEye" path ="textures/evilEye.jpg"/>
 		<Material name ="M_WhiteChecker" path ="textures/whiteCheckerPiece.png"/>
 		<Material name ="M_RedChecker" path ="textures/redCheckerPiece.png"/>
 		<Material name ="M_Mario" path ="textures/mario_main.png"/>

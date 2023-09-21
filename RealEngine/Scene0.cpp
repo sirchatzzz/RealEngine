@@ -23,7 +23,7 @@ bool Scene0::OnCreate() {
 
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
-	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -15.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
 	camera->UpdateViewMatrix();
 	camera->OnCreate();
 
@@ -41,8 +41,8 @@ bool Scene0::OnCreate() {
 	//sphere
 	sphere = std::make_shared<Actor>(nullptr);
 	sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
-	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
+	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_EvilEye"));
+	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.8f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
 
 	Matrix4 projectionMatrix = MMath::perspective(45.0f, (16.0f / 9.0f), 0.5f, 100.0f);
@@ -185,7 +185,7 @@ void Scene0::Render() const {
 
 	glUseProgram(shader->GetProgram());
 	glUniformMatrix4fv(shader->GetUniformID("projection"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(shader->GetUniformID("view"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("view"), 1, GL_FALSE, camera->GetViewMatrix());
 	glUniformMatrix4fv(shader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, lightSpaceMatrix);
 	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
 	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());
@@ -200,6 +200,7 @@ void Scene0::Render() const {
 	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, plane->getModelMatrix());
 	plane->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
+	glBindTexture(GL_TEXTURE_2D, sphere->GetComponent<MaterialComponent>()->getTextureID());
 	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
 	sphere->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
