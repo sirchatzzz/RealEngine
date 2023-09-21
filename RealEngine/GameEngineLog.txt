@@ -1,8 +1,8 @@
-Thu Sep 21 00:20:16 2023
+Thu Sep 21 12:10:24 2023
 [INFO]: Starting the SceneManager
-[INFO]: OpenGL version: 4.6.0 NVIDIA 536.40
+[INFO]: OpenGL version: 4.6.0 NVIDIA 536.45
 [INFO]: Graphics card vendor NVIDIA Corporation
-[INFO]: Graphics card name NVIDIA GeForce RTX 3080 Ti/PCIe/SSE2
+[INFO]: Graphics card name NVIDIA GeForce RTX 4050 Laptop GPU/PCIe/SSE2
 [INFO]: GLSL Version 4.60 NVIDIA
 [INFO]: Created Scene0: 
 [INFO]: Loading assets Scene0: 
@@ -11,13 +11,14 @@ Thu Sep 21 00:20:16 2023
 "model" loc:1
 
 [INFO]: Uniforms:
-"lightPos" loc:0
-"lightSpaceMatrix" loc:1
-"model" loc:2
-"projection" loc:3
-"shadowMap" loc:4
-"view" loc:5
-"viewPos" loc:6
+"diffuseTexture" loc:0
+"lightPos" loc:1
+"lightSpaceMatrix" loc:2
+"model" loc:3
+"projection" loc:4
+"shadowMap" loc:5
+"view" loc:6
+"viewPos" loc:7
 
 [INFO]: Uniforms:
 "colorID" loc:3
@@ -35,3 +36,6 @@ Thu Sep 21 00:20:16 2023
 "skyBoxTexture" loc:2
 "viewMatrix" loc:1
 
+[INFO]: Deleting the SceneManager
+[INFO]: Deleting assets Scene0: 
+[INFO]: Deleted Scene0: 

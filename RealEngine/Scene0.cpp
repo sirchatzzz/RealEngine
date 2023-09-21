@@ -34,12 +34,14 @@ bool Scene0::OnCreate() {
 	//plane
 	plane = std::make_shared<Actor>(nullptr);
 	plane->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Plane"));
+	plane->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	plane->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -6.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
 	plane->OnCreate();
 
 	//sphere
 	sphere = std::make_shared<Actor>(nullptr);
 	sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
+	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
 
@@ -124,6 +126,7 @@ void Scene0::RenderShadowMap()
 
 	glUniformMatrix4fv(shadowShader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, lightSpaceMatrix);
 
+	glBindTexture(GL_TEXTURE_2D, sphere->GetComponent<MaterialComponent>()->getTextureID());
 	glUniformMatrix4fv(shadowShader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
 	sphere->GetComponent<MeshComponent>()->Render();
 
@@ -187,8 +190,13 @@ void Scene0::Render() const {
 	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
 	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());
 
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, shadowMap);
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "shadowMap"), 0);
 
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, plane->GetComponent<MaterialComponent>()->getTextureID());
+	glUniform1i(glGetUniformLocation(shader->GetProgram(), "diffuseTexture"), 1);
 	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, plane->getModelMatrix());
 	plane->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
