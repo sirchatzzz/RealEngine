@@ -45,7 +45,7 @@ bool Scene0::OnCreate()
 	sphere = std::make_shared<Actor>(nullptr);
 	sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
 	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_EvilEye"));
-	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.8f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
+	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.75f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
 
 	CreateBuffer();
