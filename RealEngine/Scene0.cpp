@@ -20,6 +20,8 @@ bool Scene0::OnCreate()
 {
 	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
 
+	CreateBuffer();
+
 	assetManager = std::make_shared<AssetManager>();
 
 	skybox = assetManager->GetComponent<SkyboxActor>("SB_NightSky");
@@ -48,8 +50,11 @@ bool Scene0::OnCreate()
 	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.75f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
 
+<<<<<<< Updated upstream
 	CreateBuffer();
 
+=======
+>>>>>>> Stashed changes
 	return true;
 }
 
@@ -58,8 +63,26 @@ void Scene0::OnDestroy()
 	Debug::Info("Deleting assets Scene0: ", __FILE__, __LINE__);
 }
 
+<<<<<<< Updated upstream
 void Scene0::HandleEvents(const SDL_Event &sdlEvent) 
 {
+=======
+void Scene0::HandleGUI()
+{
+
+	bool open = true;
+	ImGui::Begin("Frame rate", &open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+	ImGui::Text("%.1f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+	ImGui::End();
+
+	ImGui::Begin("Background color");
+	//ImGui::ColorEdit3("background color", backGroundColor);
+	ImGui::End();
+
+}
+
+void Scene0::HandleEvents(const SDL_Event &sdlEvent) {
+>>>>>>> Stashed changes
 	static Vec2 currentMousePos;
 	static Vec2 lastMousePos;
 	unsigned int objID = -1;
@@ -209,4 +232,76 @@ void Scene0::RenderShadowMap()
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
 
+<<<<<<< Updated upstream
+=======
+}
+
+void Scene0::Update(const float deltaTime) {
+	static float totalTime = 0.0f;
+	totalTime += deltaTime / 2.0f; 
+
+	RenderShadowMap();
+	HandleGUI();
+
+}
+
+int Scene0::Pick(int x, int y) {
+	glDisable(GL_DEPTH_TEST);
+	glClearColor(1.0f, 1.0f, 1.0f, 0.0f); /// Paint the backgound white which is 0x00FFFFFF
+	glClear(GL_COLOR_BUFFER_BIT);
+	Ref<ShaderComponent> colorPickerShader = assetManager->GetComponent<ShaderComponent>("S_ColorPicker");
+	glUseProgram(colorPickerShader->GetProgram());
+
+	glUniformMatrix4fv(colorPickerShader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(colorPickerShader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+
+	//for (GLuint i = 0; i < redCheckers.size(); i++) {
+	//	glUniformMatrix4fv(colorPickerShader->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
+	//	glUniform1ui(colorPickerShader->GetUniformID("colorID"), i);
+	//	redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	//}
+
+	glUseProgram(0);
+
+	GLuint colorIndex;
+	glReadPixels(x, viewport.height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &colorIndex);
+	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
+	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
+	else return colorIndex;
+}
+
+void Scene0::Render() const {
+
+	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("S_ShadowPhong");
+
+	glViewport(0, 0, 1280, 720);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);
+	glUseProgram(skybox->GetShader()->GetProgram());
+	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+	skybox->Render();
+
+	glEnable(GL_DEPTH_TEST);
+
+	glUseProgram(shader->GetProgram());
+	glUniformMatrix4fv(shader->GetUniformID("projection"), 1, GL_FALSE, camera->GetProjectionMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("view"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, lightSpaceMatrix);
+	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetComponent<TransformComponent>()->GetPosition());
+	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());
+
+	glBindTexture(GL_TEXTURE_2D, shadowMap);
+
+	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, plane->getModelMatrix());
+	plane->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+
+	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
+	sphere->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+
+	glUseProgram(0);
+>>>>>>> Stashed changes
 }

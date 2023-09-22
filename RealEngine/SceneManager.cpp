@@ -4,9 +4,14 @@
 #include "Window.h"
 #include "Scene0.h"
 
+//imGui stuff
+#include "imgui.h"
+#include "imgui_impl_sdl.h"
+#include "imgui_impl_opengl3.h"
+
 SceneManager::SceneManager(): 
-	currentScene{nullptr}, window{nullptr}, timer{nullptr},
-	fps(60), isRunning{false}, fullScreen{false} {
+	currentScene{ nullptr }, window(nullptr), timer(nullptr),
+	fps(60), isRunning(false), fullScreen(false), showDemoWindow(true) {
 	Debug::Info("Starting the SceneManager", __FILE__, __LINE__);
 }
 
@@ -28,6 +33,10 @@ SceneManager::~SceneManager() {
 		delete window;
 		window = nullptr;
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
 	
 }
 
@@ -48,6 +57,15 @@ bool SceneManager::Initialize(std::string name_, int width_, int height_) {
 	/********************************   Default first scene   ***********************/
 	BuildNewScene(SCENE_NUMBER::SCENE0);
 	/********************************************************************************/
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); //(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplSDL2_InitForOpenGL(window->GetWindow(), window->GetContext());
+	ImGui_ImplOpenGL3_Init("#version 450");
+	io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\Arial.ttf", 18.0f);
+
 	return true;
 }
 
@@ -56,11 +74,21 @@ void SceneManager::Run() {
 	timer->Start();
 	isRunning = true;
 	while (isRunning) {
+		HandleEvents();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplSDL2_NewFrame();
+		ImGui::NewFrame();
+		if (showDemoWindow) {
+			ImGui::ShowDemoWindow(&showDemoWindow);
+		}
 		timer->UpdateFrameTicks();
 		currentScene->Update(timer->GetDeltaTime());
 		currentScene->Render();
-		SDL_GL_SwapWindow(window->getWindow());
-		HandleEvents();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		SDL_GL_SwapWindow(window->GetWindow());
 		SDL_Delay(timer->GetSleepTime(fps));
 	}
 }
@@ -68,6 +96,7 @@ void SceneManager::Run() {
 void SceneManager::HandleEvents() {
 	SDL_Event sdlEvent;
 	while (SDL_PollEvent(&sdlEvent)) { /// Loop over all events in the SDL queue
+		ImGui_ImplSDL2_ProcessEvent(&sdlEvent);
 		if (sdlEvent.type == SDL_EventType::SDL_QUIT) {
 			isRunning = false;
 			return;
@@ -117,11 +146,6 @@ bool SceneManager::BuildNewScene(SCENE_NUMBER scene) {
 		currentScene = new Scene0();
 		status = currentScene->OnCreate();
 		break;
-
-	/*case SCENE_NUMBER::SCENE1:
-		currentScene = new Scene1();
-		status = currentScene->OnCreate();
-		break;*/
 
 	default:
 		Debug::Error("Incorrect scene number assigned in the manager", __FILE__, __LINE__);

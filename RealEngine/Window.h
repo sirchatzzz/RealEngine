@@ -25,12 +25,13 @@ public:
 	bool OnCreate(std::string name_, int width_, int height_);
 	void OnDestroy();
 	
-	int getWidth() const { return width; }
-	int getHeight() const { return height; }
-	SDL_Window* getWindow() const { return window; }
+	int GetWidth() const { return width; }
+	int GetHeight() const { return height; }
+	SDL_Window* GetWindow() const { return window; }
+	SDL_GLContext GetContext() const { return context; }
 
 private: /// internal tools OpenGl versions. 
-	void setAttributes(int major_, int minor_);
-	void getInstalledOpenGLInfo(int *major, int *minor);
+	void SetAttributes(int major_, int minor_);
+	void GetInstalledOpenGLInfo(int *major, int *minor);
 };
 #endif /// !WINDOW_H

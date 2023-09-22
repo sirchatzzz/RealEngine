@@ -29,6 +29,7 @@ private:
 
 	unsigned int fps;
 	bool isRunning;
+	bool showDemoWindow;
 	bool fullScreen;
 	bool BuildNewScene(SCENE_NUMBER scene_);
 };

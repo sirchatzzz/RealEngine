@@ -23,8 +23,8 @@ bool Window::OnCreate(std::string name_, int width_, int height_) {
 	}
 	context = SDL_GL_CreateContext(window);
 	int major, minor;
-	getInstalledOpenGLInfo(&major,&minor);
-	setAttributes(major,minor);
+	GetInstalledOpenGLInfo(&major,&minor);
+	SetAttributes(major,minor);
 
 	/// Fire up the GL Extension Wrangler
 	GLenum err = glewInit();
@@ -46,7 +46,7 @@ void Window::OnDestroy() {
 
 
 
-void Window::getInstalledOpenGLInfo(int *major, int *minor) {
+void Window::GetInstalledOpenGLInfo(int *major, int *minor) {
 	/// You can to get some info regarding versions and manufacturer
 	const GLubyte *version = glGetString(GL_VERSION);
 	/// You can also get the version as ints	
@@ -64,7 +64,7 @@ void Window::getInstalledOpenGLInfo(int *major, int *minor) {
 	return;
 }
 
-void Window::setAttributes(int major_, int minor_) {
+void Window::SetAttributes(int major_, int minor_) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, major_);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, minor_);

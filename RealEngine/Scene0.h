@@ -9,6 +9,8 @@
 #include "TransformComponent.h"
 #include "AssetManager.h"
 #include "Core.h"
+#include "imgui.h"
+#include "imgui_impl_opengl3.h"
 
 using namespace MATH;
 
@@ -37,4 +39,5 @@ public:
 	virtual void HandleEvents(const SDL_Event &sdlEvent) override;
 	void CreateBuffer();
 	void RenderShadowMap();
+	void HandleGUI();
 };
