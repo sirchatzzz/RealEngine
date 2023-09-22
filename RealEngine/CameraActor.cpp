@@ -68,6 +68,7 @@ void CameraActor::UpdateViewMatrix() {
 		Quaternion quaternion = transformComponent->GetOrientation();
 		Vec3 position = transformComponent->GetPosition();
 		viewMatrix = MMath::toMatrix4(quaternion) * MMath::translate(position);
+		//viewMatrix = rotationMatrix * MMath::toMatrix4(quaternion) * MMath::translate(position);
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatriciesID);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(Matrix4), viewMatrix);

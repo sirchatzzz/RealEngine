@@ -13,6 +13,7 @@ uniform sampler2D shadowMap;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
+uniform vec3 lightColor;
 
 vec3 lightDir;
 float ShadowCalc(vec4 fragPosLightSpace);
@@ -20,8 +21,7 @@ float ShadowCalc(vec4 fragPosLightSpace);
 void main() {
 	vec3 color = texture(diffuseTexture, texCoords).rgb;
 	vec3 normal = normalize(normal);
-	vec3 lightColor = vec3(1.0);
-	vec3 ambient = 0.09 * lightColor;
+	vec3 ambient = 0.001 * lightColor;
 	lightDir = normalize(lightPos - fragPos);
 	float diff = max(dot(lightDir, normal), 0.0);
 	vec3 diffuse = diff * lightColor;

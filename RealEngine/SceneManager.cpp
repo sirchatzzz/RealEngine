@@ -11,7 +11,7 @@
 
 SceneManager::SceneManager(): 
 	currentScene{ nullptr }, window(nullptr), timer(nullptr),
-	fps(60), isRunning(false), fullScreen(false), showDemoWindow(true) {
+	fps(60), isRunning(false), fullScreen(false), showDemoWindow(false) {
 	Debug::Info("Starting the SceneManager", __FILE__, __LINE__);
 }
 

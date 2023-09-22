@@ -18,7 +18,9 @@
 		<Sound name ="SE_Hit" path ="sound/hit.mp3"/>
 		<Camera name ="Camera"/>
 		<Light name ="L_Point"/>
-		<Skybox name ="SB_CNTower" posX ="skyboxes/cnTower/posX.jpg" negX ="skyboxes/cnTower/negX.jpg" posY ="skyboxes/cnTower/posY.jpg" negY ="skyboxes/cnTower/negY.jpg" posZ ="skyboxes/cnTower/posZ.jpg" negZ ="skyboxes/cnTower/negZ.jpg"/>
-		<Skybox name ="SB_NightSky" posX ="skyboxes/nightSky/posX.png" negX ="skyboxes/nightSky/negX.png" posY ="skyboxes/nightSky/posY.png" negY ="skyboxes/nightSky/negY.png" posZ ="skyboxes/nightSky/posZ.png" negZ ="skyboxes/nightSky/negZ.png"/>
+		<Skybox name ="SB_Beach" posX ="skyboxes/beach/posX.jpg" negX ="skyboxes/beach/negX.jpg" posY ="skyboxes/beach/posY.jpg" negY ="skyboxes/beach/negY.jpg" posZ ="skyboxes/beach/posZ.jpg" negZ ="skyboxes/beach/negZ.jpg"/>
+		<Skybox name ="SB_Sunset" posX ="skyboxes/sunset/posX.jpg" negX ="skyboxes/sunset/negX.jpg" posY ="skyboxes/sunset/posY.jpg" negY ="skyboxes/sunset/negY.jpg" posZ ="skyboxes/sunset/posZ.jpg" negZ ="skyboxes/sunset/negZ.jpg"/>
+		<Skybox name ="SB_Snow" posX ="skyboxes/snow/posX.jpg" negX ="skyboxes/snow/negX.jpg" posY ="skyboxes/snow/posY.jpg" negY ="skyboxes/snow/negY.jpg" posZ ="skyboxes/snow/posZ.jpg" negZ ="skyboxes/snow/negZ.jpg"/>
+		<Skybox name ="SB_Niagara" posX ="skyboxes/niagara/posX.jpg" negX ="skyboxes/niagara/negX.jpg" posY ="skyboxes/niagara/posY.jpg" negY ="skyboxes/niagara/negY.jpg" posZ ="skyboxes/niagara/posZ.jpg" negZ ="skyboxes/niagara/negZ.jpg"/>
     </Assets>
 </Root>

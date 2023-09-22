@@ -5,7 +5,7 @@
 #include "Scene0.h"
 #include "Debug.h"
 
-Scene0::Scene0() : shadowMap(0), shadowMapFBO(0)
+Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)), backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f))
 {
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -24,7 +24,7 @@ bool Scene0::OnCreate()
 
 	assetManager = std::make_shared<AssetManager>();
 
-	skybox = assetManager->GetComponent<SkyboxActor>("SB_NightSky");
+	skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
 
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
@@ -35,6 +35,7 @@ bool Scene0::OnCreate()
 	//light
 	light = assetManager->GetComponent<LightActor>("L_Point");
 	light->UpdatePosition(Vec3(-10.0f, 4.0f, 6.0f));
+	lightPosition = light->GetPosition();
 
 	//plane
 	plane = std::make_shared<Actor>(nullptr);
@@ -42,6 +43,7 @@ bool Scene0::OnCreate()
 	plane->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 	plane->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -6.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
 	plane->OnCreate();
+	sceneMeshes.push_back(plane);
 
 	//sphere
 	sphere = std::make_shared<Actor>(nullptr);
@@ -49,6 +51,12 @@ bool Scene0::OnCreate()
 	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_EvilEye"));
 	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.75f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
+	sceneMeshes.push_back(sphere);
+
+	//GUI stuff
+	cameraPosition = camera->GetComponent<TransformComponent>()->GetPosition();
+	cameraOrientation = camera->GetComponent<TransformComponent>()->GetOrientation();
+	cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
 
 	return true;
 }
@@ -60,8 +68,8 @@ void Scene0::OnDestroy()
 
 void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 {
-
-		static Vec2 currentMousePos;
+	//camera->HandleEvents(sdlEvent);
+	static Vec2 currentMousePos;
 	static Vec2 lastMousePos;
 	unsigned int objID = -1;
 	switch (sdlEvent.type) 
@@ -78,7 +86,7 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 		lastMousePos = currentMousePos;
 
 		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
-		printf("0x%X %d\n", objID, objID);
+		//printf("0x%X %d\n", objID, objID);
 		break;
 
 	case SDL_MOUSEBUTTONUP:
@@ -97,10 +105,27 @@ void Scene0::HandleGUI()
 	ImGui::Text("%.1f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 
-	ImGui::Begin("Background color");
-	//ImGui::ColorEdit3("background color", backGroundColor);
+	ImGui::Begin("Settings");
+	ImGui::SliderFloat3("Camera Position", cameraPosition, -10.0f, 10.0f);
+	camera->GetComponent<TransformComponent>()->SetPosition(cameraPosition);
+	ImGui::SliderFloat4("Camera Rotation", cameraOrientationVector, -1.0f, 1.0f);
+	camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(cameraOrientationVector.x, Vec3(cameraOrientationVector.y, cameraOrientationVector.z, cameraOrientationVector.w)));
+	ImGui::SliderFloat3("Light Position", lightPosition, -10.0f, 10.0f);
+	ImGui::ColorEdit4("Light Color", lightColor);
+	ImGui::ColorEdit4("Background Color", backgroundColor);
+	if (ImGui::Button("Beach")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
+	ImGui::SameLine();
+	if (ImGui::Button("Sunset")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Sunset");
+	ImGui::SameLine();
+	if (ImGui::Button("Niagara")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Niagara");
+	ImGui::SameLine();
+	if (ImGui::Button("Snow")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Snow");
+	ImGui::SameLine();
+	if (ImGui::Button("None")) skybox = nullptr;
 	ImGui::End();
 
+	light->UpdatePosition(lightPosition);
+	camera->UpdateViewMatrix();
 }
 
 void Scene0::Update(const float deltaTime)
@@ -118,15 +143,20 @@ void Scene0::Render() const
 	Ref<ShaderComponent> shader = assetManager->GetComponent<ShaderComponent>("S_ShadowPhong");
 
 	glViewport(0, 0, 1280, 720);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(backgroundColor.x, backgroundColor.y, backgroundColor.z, backgroundColor.w);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glUseProgram(skybox->GetShader()->GetProgram());
-	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(skybox->GetShader()->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
-	skybox->Render();
+	if (skybox != nullptr) 
+	{
+
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glUseProgram(skybox->GetShader()->GetProgram());
+		glUniformMatrix4fv(skybox->GetShader()->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
+		glUniformMatrix4fv(skybox->GetShader()->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+		skybox->Render();
+
+	}
 
 	glEnable(GL_DEPTH_TEST);
 
@@ -136,6 +166,7 @@ void Scene0::Render() const
 	glUniformMatrix4fv(shader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, light->GetLightSpaceMatrix());
 	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetPosition());
 	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());
+	glUniform3fv(shader->GetUniformID("lightColor"), 1, lightColor);
 
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, shadowMap);

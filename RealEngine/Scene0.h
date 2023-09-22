@@ -17,6 +17,8 @@ using namespace MATH;
 class Scene0 : public Scene {
 private:
 
+	std::vector<Ref<Actor>> sceneMeshes;
+
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor>camera;
 	Ref<LightActor>light;
@@ -26,6 +28,14 @@ private:
 
 	GLuint shadowMapFBO;
 	GLuint shadowMap;
+
+	//GUI Buffer variables
+	Vec3 lightPosition;
+	Vec3 cameraPosition;
+	Vec4 cameraOrientationVector;
+	Vec4 backgroundColor;
+	Vec4 lightColor;
+	Quaternion cameraOrientation;
 
 public:
 	explicit Scene0();

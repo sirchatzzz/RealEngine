@@ -1,4 +1,4 @@
-Thu Sep 21 21:37:55 2023
+Fri Sep 22 00:43:56 2023
 [INFO]: Starting the SceneManager
 [INFO]: OpenGL version: 4.6.0 NVIDIA 536.40
 [INFO]: Graphics card vendor NVIDIA Corporation
@@ -12,18 +12,29 @@ Thu Sep 21 21:37:55 2023
 
 [INFO]: Uniforms:
 "diffuseTexture" loc:0
-"lightPos" loc:1
-"lightSpaceMatrix" loc:2
-"model" loc:3
-"projection" loc:4
-"shadowMap" loc:5
-"view" loc:6
-"viewPos" loc:7
+"lightColor" loc:1
+"lightPos" loc:2
+"lightSpaceMatrix" loc:3
+"model" loc:4
+"projection" loc:5
+"shadowMap" loc:6
+"view" loc:7
+"viewPos" loc:8
 
 [INFO]: Uniforms:
 "colorID" loc:3
 "modelMatrix" loc:2
 "projectionMatrix" loc:0
+"viewMatrix" loc:1
+
+[INFO]: Uniforms:
+"projectionMatrix" loc:0
+"skyBoxTexture" loc:2
+"viewMatrix" loc:1
+
+[INFO]: Uniforms:
+"projectionMatrix" loc:0
+"skyBoxTexture" loc:2
 "viewMatrix" loc:1
 
 [INFO]: Uniforms:
