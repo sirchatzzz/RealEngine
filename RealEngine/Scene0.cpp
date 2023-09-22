@@ -6,10 +6,12 @@
 #include "Debug.h"
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
-backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f))
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), rootData(nullptr), assetsData(nullptr), currentSkybox(nullptr), openGUI(false)
 {
+
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
+
 }
 
 Scene0::~Scene0() 
@@ -91,6 +93,11 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 	switch (sdlEvent.type) 
 	{
 	case SDL_KEYDOWN:
+		switch (sdlEvent.key.keysym.scancode) {
+		case SDL_SCANCODE_G:
+			openGUI = !openGUI;
+			break;
+		}
 		break;
 
 	case SDL_MOUSEMOTION:
@@ -153,15 +160,6 @@ void Scene0::HandleGUI()
 	}
 	ImGui::End();
 
-	//ImGui::Begin("Meshes");
-	//for (int i = 0; i < sceneMeshes.size(); ++i)
-	//{
-	//	ImGui::SliderFloat3("Component", meshesNewPosition[i], -10.0f, 10.0f);
-	//	meshesPosition[i] = meshesNewPosition[i];
-	//	sceneMeshes[i]->GetComponent<TransformComponent>()->SetPosition(meshesNewPosition[i]);
-	//}
-	//ImGui::End();
-	
 	light->UpdatePosition(lightPosition);
 	camera->UpdateViewMatrix();
 }
@@ -172,13 +170,13 @@ void Scene0::Update(const float deltaTime)
 	saveTime += deltaTime;
 	if(saveTime > 5.0f)
 	{
+		printf("Progress Saved! \n");
 		WriteXML();
-		printf("Progress Saved \n");
 		saveTime = 0.0f;
 	}
 
 	RenderShadowMap();
-	HandleGUI();
+	if(openGUI)	HandleGUI();
 
 }
 

@@ -33,7 +33,7 @@ private:
 	GLuint shadowMapFBO;
 	GLuint shadowMap;
 
-	//GUI Buffer variables
+	//GUI stuff
 	Vec3 lightPosition;
 	Vec3 cameraPosition;
 	Vec3 position;
@@ -41,6 +41,7 @@ private:
 	Vec4 backgroundColor;
 	Vec4 lightColor;
 	Quaternion cameraOrientation;
+	bool openGUI;
 
 	//save system
 	XMLDocument XML;

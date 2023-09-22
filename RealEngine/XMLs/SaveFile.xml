@@ -3,9 +3,9 @@
     <Data>
         <CameraPosition x="0" y="0" z="-5"/>
         <CameraRotation x="0" y="0" z="0" w="1"/>
-        <LightPosition x="6.9699998" y="4" z="6"/>
-        <LightColor x="1" y="0" z="0" w="1"/>
-        <BackgroundColor x="1" y="1" z="1" w="0"/>
-        <Skybox name="SB_Niagara"/>
+        <LightPosition x="-10" y="4" z="6"/>
+        <LightColor x="1" y="1" z="1" w="1"/>
+        <BackgroundColor x="0" y="0" z="0" w="0"/>
+        <Skybox name="SB_Snow"/>
     </Data>
 </Root>
