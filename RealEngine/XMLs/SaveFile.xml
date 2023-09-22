@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
-        <CameraPosition x="0" y="0" z="-5"/>
+        <CameraPosition x="0" y="0" z="-3.2090001"/>
         <CameraRotation x="0" y="0" z="0" w="1"/>
-        <LightPosition x="-10" y="4" z="6"/>
-        <LightColor x="1" y="1" z="1" w="1"/>
+        <LightPosition x="-10" y="0.36399999" z="6"/>
+        <LightColor x="0.98841697" y="0.98841697" z="0.98841697" w="1"/>
         <BackgroundColor x="0" y="0" z="0" w="0"/>
         <Skybox name="SB_Snow"/>
     </Data>

@@ -42,6 +42,7 @@ private:
 	Vec4 lightColor;
 	Quaternion cameraOrientation;
 	bool openGUI;
+	bool canRotate;
 
 	//save system
 	XMLDocument XML;

@@ -6,7 +6,7 @@
 #include "Debug.h"
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
-backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), rootData(nullptr), assetsData(nullptr), currentSkybox(nullptr), openGUI(false)
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), rootData(nullptr), assetsData(nullptr), currentSkybox(nullptr), openGUI(false), canRotate(true)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -86,7 +86,9 @@ void Scene0::OnDestroy()
 
 void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 {
-	//camera->HandleEvents(sdlEvent);
+
+	if (canRotate) camera->HandleEvents(sdlEvent);
+
 	static Vec2 currentMousePos;
 	static Vec2 lastMousePos;
 	unsigned int objID = -1;
@@ -96,6 +98,9 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 		switch (sdlEvent.key.keysym.scancode) {
 		case SDL_SCANCODE_G:
 			openGUI = !openGUI;
+			break;
+		case SDL_SCANCODE_R:
+			canRotate = !canRotate;
 			break;
 		}
 		break;
@@ -118,13 +123,13 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 	default:
 		break;
 	}
+
 }
 
 void Scene0::HandleGUI()
 {
 
-	bool open = true;
-	ImGui::Begin("Frame rate", &open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
+	ImGui::Begin("Frame rate", &openGUI, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
 	ImGui::Text("%.1f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 
@@ -204,8 +209,9 @@ void Scene0::Render() const
 	glEnable(GL_DEPTH_TEST);
 
 	glUseProgram(shader->GetProgram());
-	glUniformMatrix4fv(shader->GetUniformID("projection"), 1, GL_FALSE, camera->GetProjectionMatrix());
+
 	glUniformMatrix4fv(shader->GetUniformID("view"), 1, GL_FALSE, camera->GetViewMatrix());
+	glUniformMatrix4fv(shader->GetUniformID("projection"), 1, GL_FALSE, camera->GetProjectionMatrix());
 	glUniformMatrix4fv(shader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, light->GetLightSpaceMatrix());
 	glUniform3fv(shader->GetUniformID("lightPos"), 1, light->GetPosition());
 	glUniform3fv(shader->GetUniformID("viewPos"), 1, camera->GetComponent<TransformComponent>()->GetPosition());

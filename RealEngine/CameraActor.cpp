@@ -5,17 +5,20 @@
 #include "TransformComponent.h"
 #include "UBO_Padding.h"
 using namespace MATH;
-CameraActor::CameraActor(Component* parent_) :Actor(parent_), uboMatriciesID(0), isCreated(false) {
+CameraActor::CameraActor(Component* parent_) :Actor(parent_), uboMatriciesID(0), isCreated(false)
+{
 	bindingPoint = 0;
 	trackball = std::make_unique<Trackball>();
 	viewMatrix = rotationMatrix * translationMatrix;
 }
 
-CameraActor::~CameraActor() {
+CameraActor::~CameraActor() 
+{
 	OnDestroy();
 }
 
-bool CameraActor::OnCreate() {
+bool CameraActor::OnCreate() 
+{
 	if (isCreated) return true;
 	for (const auto& c : components) {
 		if (!c->OnCreate()) return false;
@@ -37,11 +40,13 @@ bool CameraActor::OnCreate() {
 
 
 
-void CameraActor::Update(const float deltaTime) {
-
+void CameraActor::Update(const float deltaTime) 
+{
+	//
 }
 
-void CameraActor::HandleEvents(const SDL_Event& sdlEvent) {
+void CameraActor::HandleEvents(const SDL_Event& sdlEvent) 
+{
 	trackball->HandleEvents(sdlEvent);
 	rotationMatrix = trackball->getMatrix4();
 	viewMatrix = rotationMatrix * translationMatrix;
@@ -50,7 +55,8 @@ void CameraActor::HandleEvents(const SDL_Event& sdlEvent) {
 void CameraActor::Render() const {
 }
 
-void CameraActor::UpdateProjectionMatrix(const float fovy, const float aspectRatio, const float near, const float far) {
+void CameraActor::UpdateProjectionMatrix(const float fovy, const float aspectRatio, const float near, const float far) 
+{
 	size_t offset = 0;
 	projectionMatrix = MMath::perspective(fovy, aspectRatio, near, far);
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatriciesID);
@@ -58,7 +64,8 @@ void CameraActor::UpdateProjectionMatrix(const float fovy, const float aspectRat
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void CameraActor::UpdateViewMatrix() {
+void CameraActor::UpdateViewMatrix() 
+{
 	size_t offset = sizeof(Matrix4);
 	Ref<TransformComponent> transformComponent = GetComponent<TransformComponent>();
 	if (transformComponent == nullptr) {
@@ -68,7 +75,7 @@ void CameraActor::UpdateViewMatrix() {
 		Quaternion quaternion = transformComponent->GetOrientation();
 		Vec3 position = transformComponent->GetPosition();
 		viewMatrix = MMath::toMatrix4(quaternion) * MMath::translate(position);
-		//viewMatrix = rotationMatrix * MMath::toMatrix4(quaternion) * MMath::translate(position);
+		skyboxMatrix = MMath::toMatrix4(quaternion) * rotationMatrix * MMath::translate(position);
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, uboMatriciesID);
 	glBufferSubData(GL_UNIFORM_BUFFER, offset, sizeof(Matrix4), viewMatrix);
