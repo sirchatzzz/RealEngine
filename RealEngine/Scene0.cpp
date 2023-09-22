@@ -5,7 +5,8 @@
 #include "Scene0.h"
 #include "Debug.h"
 
-Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)), backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f))
+Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f))
 {
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -21,10 +22,11 @@ bool Scene0::OnCreate()
 	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
 
 	CreateBuffer();
+	LoadXML();
 
 	assetManager = std::make_shared<AssetManager>();
 
-	skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
+	UpdateSkybox("SB_Beach");
 
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
@@ -53,10 +55,24 @@ bool Scene0::OnCreate()
 	sphere->OnCreate();
 	sceneMeshes.push_back(sphere);
 
+	ReadXML();
+
 	//GUI stuff
 	cameraPosition = camera->GetComponent<TransformComponent>()->GetPosition();
 	cameraOrientation = camera->GetComponent<TransformComponent>()->GetOrientation();
 	cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
+
+	for (auto c : sceneMeshes)
+	{
+		position = c->GetComponent<TransformComponent>()->GetPosition();
+		meshesPosition.push_back(position);
+	}
+
+	for (auto c : sceneMeshes)
+	{
+		position = c->GetComponent<TransformComponent>()->GetPosition();
+		meshesNewPosition.push_back(position);
+	}
 
 	return true;
 }
@@ -113,28 +129,57 @@ void Scene0::HandleGUI()
 	ImGui::SliderFloat3("Light Position", lightPosition, -10.0f, 10.0f);
 	ImGui::ColorEdit4("Light Color", lightColor);
 	ImGui::ColorEdit4("Background Color", backgroundColor);
-	if (ImGui::Button("Beach")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
+	if (ImGui::Button("Beach")) UpdateSkybox("SB_Beach");
 	ImGui::SameLine();
-	if (ImGui::Button("Sunset")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Sunset");
+	if (ImGui::Button("Sunset")) UpdateSkybox("SB_Sunset");
 	ImGui::SameLine();
-	if (ImGui::Button("Niagara")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Niagara");
+	if (ImGui::Button("Niagara")) UpdateSkybox("SB_Niagara");
 	ImGui::SameLine();
-	if (ImGui::Button("Snow")) skybox = assetManager->GetComponent<SkyboxActor>("SB_Snow");
+	if (ImGui::Button("Snow")) UpdateSkybox("SB_Snow");
 	ImGui::SameLine();
 	if (ImGui::Button("None")) skybox = nullptr;
+	if (ImGui::Button("Reset Everything", ImVec2(306.0, 30.0)))
+	{
+		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
+		camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f)));
+		light->UpdatePosition(Vec3(-10.0f, 4.0f, 6.0f));
+		lightColor = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
+		backgroundColor = Vec4(0.0f, 0.0f, 0.0f, 0.0f);
+		skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
+		lightPosition = Vec3(-10.0f, 4.0f, 6.0f);
+		cameraPosition = Vec3(0.0f, 0.0f, -5.0f);
+		cameraOrientationVector = Vec4(1.0f, 0.0f, 0.0f, 0.0f);
+		cameraOrientation = Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f));
+	}
 	ImGui::End();
 
+	//ImGui::Begin("Meshes");
+	//for (int i = 0; i < sceneMeshes.size(); ++i)
+	//{
+	//	ImGui::SliderFloat3("Component", meshesNewPosition[i], -10.0f, 10.0f);
+	//	meshesPosition[i] = meshesNewPosition[i];
+	//	sceneMeshes[i]->GetComponent<TransformComponent>()->SetPosition(meshesNewPosition[i]);
+	//}
+	//ImGui::End();
+	
 	light->UpdatePosition(lightPosition);
 	camera->UpdateViewMatrix();
 }
 
 void Scene0::Update(const float deltaTime)
 {
-	static float time = 0.0f;
-	time += deltaTime / 2.0f; 
+	static float saveTime = 0.0f;
+	saveTime += deltaTime;
+	if(saveTime > 5.0f)
+	{
+		WriteXML();
+		printf("Progress Saved \n");
+		saveTime = 0.0f;
+	}
 
 	RenderShadowMap();
 	HandleGUI();
+
 }
 
 void Scene0::Render() const
@@ -257,4 +302,96 @@ int Scene0::Pick(int x, int y) {
 	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
 	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
 	else return colorIndex;
+}
+
+void Scene0::LoadXML()
+{
+	XML.LoadFile("XMLs/SaveFile.xml");
+	bool status = XML.Error();
+	if (status) {
+		std::cout << XML.ErrorIDToName(XML.ErrorID()) << std::endl;
+		return;
+	}
+}
+
+void Scene0::ReadXML()
+{
+
+	rootData = XML.RootElement();
+
+	assetsData = rootData->FirstChildElement("Data");
+
+	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+	{
+		if (!strcmp(child->Name(), "CameraPosition")) camera->GetComponent<TransformComponent>()->SetPosition(Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
+		if (!strcmp(child->Name(), "CameraRotation")) camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(child->FloatAttribute("w"), Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"))));
+		if (!strcmp(child->Name(), "LightPosition"))
+		{
+			light->UpdatePosition(Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
+			lightPosition = Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"));
+		}
+		if (!strcmp(child->Name(), "LightColor")) lightColor = Vec4(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"), child->FloatAttribute("w"));
+		if (!strcmp(child->Name(), "BackgroundColor")) backgroundColor = Vec4(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"), child->FloatAttribute("w"));
+		if (!strcmp(child->Name(), "Skybox")) UpdateSkybox(child->Attribute("name"));
+	}
+}
+
+void Scene0::WriteXML()
+{
+
+	rootData = XML.RootElement();
+
+	assetsData = rootData->FirstChildElement("Data");
+
+	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+	{
+
+		if (!strcmp(child->Name(), "CameraPosition")) {
+			child->SetAttribute("x", camera->GetComponent<TransformComponent>()->GetPosition().x);
+			child->SetAttribute("y", camera->GetComponent<TransformComponent>()->GetPosition().y);
+			child->SetAttribute("z", camera->GetComponent<TransformComponent>()->GetPosition().z);
+		}
+
+		if (!strcmp(child->Name(), "CameraRotation")) {
+			child->SetAttribute("x", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.x);
+			child->SetAttribute("y", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.y);
+			child->SetAttribute("z", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.z);
+			child->SetAttribute("w", camera->GetComponent<TransformComponent>()->GetOrientation().w);
+		}
+
+		if (!strcmp(child->Name(), "LightPosition")) {
+			child->SetAttribute("x", lightPosition.x);
+			child->SetAttribute("y", lightPosition.y);
+			child->SetAttribute("z", lightPosition.z);
+		}
+
+		if (!strcmp(child->Name(), "LightColor")) {
+			child->SetAttribute("x", lightColor.x);
+			child->SetAttribute("y", lightColor.y);
+			child->SetAttribute("z", lightColor.z);
+			child->SetAttribute("w", lightColor.w);
+		}
+
+		if (!strcmp(child->Name(), "BackgroundColor"))
+		{
+			child->SetAttribute("x", backgroundColor.x);
+			child->SetAttribute("y", backgroundColor.y);
+			child->SetAttribute("z", backgroundColor.z);
+			child->SetAttribute("w", backgroundColor.w);
+		}
+
+		if (!strcmp(child->Name(), "Skybox"))
+		{
+			if(skybox != nullptr)child->SetAttribute("name", currentSkybox);
+		}
+
+		XML.SaveFile("XMLs/SaveFile.xml");
+
+	}
+}
+
+void Scene0::UpdateSkybox(const char* name)
+{
+	skybox = assetManager->GetComponent<SkyboxActor>(name);
+	currentSkybox = name;
 }

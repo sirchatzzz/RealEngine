@@ -263,8 +263,5 @@
     <Xml Include="XMLs\AssetManager.xml">
       <Filter>XMLs</Filter>
     </Xml>
-    <Xml Include="XMLs\Config.xml">
-      <Filter>XMLs</Filter>
-    </Xml>
   </ItemGroup>
 </Project>
