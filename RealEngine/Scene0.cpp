@@ -6,7 +6,7 @@
 #include "Debug.h"
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
-backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false)
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false), assetsData(nullptr), rootData(nullptr)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -32,7 +32,6 @@ bool Scene0::OnCreate()
 	//camera
 	camera = assetManager->GetComponent<CameraActor>("Camera");
 	camera->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-	camera->UpdateViewMatrix();
 	camera->OnCreate();
 
 	//light
@@ -60,6 +59,10 @@ bool Scene0::OnCreate()
 	cameraPosition = camera->GetComponent<TransformComponent>()->GetPosition();
 	cameraOrientation = camera->GetComponent<TransformComponent>()->GetOrientation();
 	cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
+	LoadSaveFile();
+	camera->GetComponent<TransformComponent>()->SetPosition(cameraPosition);
+	camera->GetComponent<TransformComponent>()->SetOrientation(cameraOrientation);
+
 
 	for (auto c : sceneMeshes)
 	{
@@ -163,15 +166,23 @@ void Scene0::HandleGUI()
 	ImGui::End();
 
 	light->UpdatePosition(lightPosition);
-	camera->UpdateViewMatrix();
 }
 
 void Scene0::Update(const float deltaTime)
 {
 	static float saveTime = 0.0f;
 	saveTime += deltaTime;
+
+	camera->UpdateViewMatrix();
+
 	if(saveTime > 5.0f)
 	{
+		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
+		saveSystem.SaveQuaternion("CameraRotation", camera->GetComponent<TransformComponent>()->GetOrientation());
+		saveSystem.SaveVec3("LightPosition", lightPosition);
+		saveSystem.SaveVec4("LightColor", lightColor);
+		saveSystem.SaveVec4("BackgroundColor", backgroundColor);
+		saveSystem.SaveSkybox("Skybox", currentSkybox);
 		printf("Progress Saved! \n");
 		saveTime = 0.0f;
 	}
@@ -308,4 +319,63 @@ void Scene0::UpdateSkybox(const char* name)
 {
 	skybox = assetManager->GetComponent<SkyboxActor>(name);
 	currentSkybox = name;
+}
+
+void Scene0::LoadSaveFile()
+{
+	XML.LoadFile("XMLs/SaveFile.xml");
+	bool status = XML.Error();
+	if (status) {
+		std::cout << XML.ErrorIDToName(XML.ErrorID()) << std::endl;
+		return;
+	}
+
+	rootData = XML.RootElement();
+
+	assetsData = rootData->FirstChildElement("Data");
+
+	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+	{
+		if (!strcmp(child->Name(), "CameraPosition"))
+		{
+			float x, y, z;
+			sscanf_s(child->Attribute("CameraPosition"), "%f,%f,%f", &x, &y, &z);
+			cameraPosition = Vec3(x, y, z);
+		}
+
+		if (!strcmp(child->Name(), "CameraRotation"))
+		{
+			float x, y, z, w;
+			sscanf_s(child->Attribute("CameraRotation"), "%f,%f,%f, %f", &x, &y, &z, &w);
+			cameraOrientation = Quaternion(w, Vec3(x, y, z));
+			cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
+		}
+
+		if (!strcmp(child->Name(), "LightPosition"))
+		{
+			float x, y, z;
+			sscanf_s(child->Attribute("LightPosition"), "%f,%f,%f", &x, &y, &z);
+			lightPosition = Vec3(x, y, z);
+			light->UpdatePosition(Vec3(x, y, z));
+		}
+
+		if (!strcmp(child->Name(), "LightColor"))
+		{
+			float x, y, z, w;
+			sscanf_s(child->Attribute("LightColor"), "%f,%f,%f,%f", &x, &y, &z, &w);
+			lightColor = Vec4(x, y, z, w);
+		}
+
+		if (!strcmp(child->Name(), "BackgroundColor"))
+		{
+			float x, y, z, w;
+			sscanf_s(child->Attribute("BackgroundColor"), "%f,%f,%f,%f", &x, &y, &z, &w);
+			backgroundColor = Vec4(x, y, z, w);
+		}
+
+		if (!strcmp(child->Name(), "Skybox"))
+		{
+			UpdateSkybox(child->Attribute("Skybox"));
+		}
+	}
 }

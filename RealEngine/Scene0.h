@@ -47,6 +47,11 @@ private:
 	bool openGUI;
 	bool canRotate;
 
+	//save system
+	tinyxml2::XMLDocument XML;
+	tinyxml2::XMLElement* rootData;
+	tinyxml2::XMLElement* assetsData;
+
 public:
 	explicit Scene0();
 	virtual ~Scene0();
@@ -61,5 +66,6 @@ public:
 	void CreateBuffer();
 	void RenderShadowMap();
 	void HandleGUI();
+	void LoadSaveFile();
 
 };

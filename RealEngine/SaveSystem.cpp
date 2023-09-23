@@ -109,7 +109,7 @@ void SaveSystem::SaveFloat(const char* name, float flt)
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
-void SaveSystem::SaveSkybox(const char* name)
+void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 {
 	tinyxml2::XMLElement* newChildElement;
 	const tinyxml2::XMLAttribute* attribute;
@@ -123,12 +123,11 @@ void SaveSystem::SaveSkybox(const char* name)
 	if (childElement == nullptr) {
 		assetsData->InsertNewChildElement(name);  // Add the new child element with the specified name.
 		childElement = assetsData->FirstChildElement(name);
-		childElement->SetAttribute(name, name);
+		childElement->SetAttribute(name, skyBox);
 	}
 	else {
-		childElement->SetAttribute(name, name);
+		childElement->SetAttribute(name, skyBox);
 	}
-
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
@@ -140,9 +139,4 @@ void SaveSystem::LoadXML()
 		std::cout << XML.ErrorIDToName(XML.ErrorID()) << std::endl;
 		return;
 	}
-}
-
-void SaveSystem::LoadSaveFile()
-{
-	rootData = XML.RootElement();
 }

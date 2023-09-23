@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
+        <CameraPosition CameraPosition="0.000000,0.000000,-5.000000"/>
+        <CameraRotation CameraRotation="0.000000,0.000000,-0.617000,1.000000"/>
+        <LightPosition LightPosition="-10.000000,4.000000,2.716000"/>
+        <LightColor LightColor="1.000000,0.000000,0.000000,1.000000"/>
+        <BackgroundColor BackgroundColor="1.000000,0.000000,0.000000,0.000000"/>
+        <Skybox Skybox="SB_Beach"/>
     </Data>
 </Root>

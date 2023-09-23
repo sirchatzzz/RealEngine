@@ -54,7 +54,8 @@ void AssetManager::ReadXML() {
 
 	assetsData = rootData->FirstChildElement("Assets");
 
-	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) {
+	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement()) 
+	{
 		if (!strcmp(child->Name(), "Mesh")) {
 			AddComponent<MeshComponent>(child->Attribute("name"), nullptr, child->Attribute("path"));
 		}
