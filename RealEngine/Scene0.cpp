@@ -6,7 +6,7 @@
 #include "Debug.h"
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
-backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), rootData(nullptr), assetsData(nullptr), currentSkybox(nullptr), openGUI(false), canRotate(true)
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -24,7 +24,6 @@ bool Scene0::OnCreate()
 	Debug::Info("Loading assets Scene0: ", __FILE__, __LINE__);
 
 	CreateBuffer();
-	LoadXML();
 
 	assetManager = std::make_shared<AssetManager>();
 
@@ -56,8 +55,6 @@ bool Scene0::OnCreate()
 	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.75f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
 	sphere->OnCreate();
 	sceneMeshes.push_back(sphere);
-
-	ReadXML();
 
 	//GUI stuff
 	cameraPosition = camera->GetComponent<TransformComponent>()->GetPosition();
@@ -100,7 +97,7 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 			openGUI = !openGUI;
 			break;
 		case SDL_SCANCODE_R:
-			canRotate = !canRotate;
+			//canRotate = !canRotate;
 			break;
 		}
 		break;
@@ -176,7 +173,6 @@ void Scene0::Update(const float deltaTime)
 	if(saveTime > 5.0f)
 	{
 		printf("Progress Saved! \n");
-		WriteXML();
 		saveTime = 0.0f;
 	}
 
@@ -306,92 +302,6 @@ int Scene0::Pick(int x, int y) {
 	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
 	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
 	else return colorIndex;
-}
-
-void Scene0::LoadXML()
-{
-	XML.LoadFile("XMLs/SaveFile.xml");
-	bool status = XML.Error();
-	if (status) {
-		std::cout << XML.ErrorIDToName(XML.ErrorID()) << std::endl;
-		return;
-	}
-}
-
-void Scene0::ReadXML()
-{
-
-	rootData = XML.RootElement();
-
-	assetsData = rootData->FirstChildElement("Data");
-
-	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
-	{
-		if (!strcmp(child->Name(), "CameraPosition")) camera->GetComponent<TransformComponent>()->SetPosition(Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
-		if (!strcmp(child->Name(), "CameraRotation")) camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(child->FloatAttribute("w"), Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"))));
-		if (!strcmp(child->Name(), "LightPosition"))
-		{
-			light->UpdatePosition(Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z")));
-			lightPosition = Vec3(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"));
-		}
-		if (!strcmp(child->Name(), "LightColor")) lightColor = Vec4(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"), child->FloatAttribute("w"));
-		if (!strcmp(child->Name(), "BackgroundColor")) backgroundColor = Vec4(child->FloatAttribute("x"), child->FloatAttribute("y"), child->FloatAttribute("z"), child->FloatAttribute("w"));
-		if (!strcmp(child->Name(), "Skybox")) UpdateSkybox(child->Attribute("name"));
-	}
-}
-
-void Scene0::WriteXML()
-{
-
-	rootData = XML.RootElement();
-
-	assetsData = rootData->FirstChildElement("Data");
-
-	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
-	{
-
-		if (!strcmp(child->Name(), "CameraPosition")) {
-			child->SetAttribute("x", camera->GetComponent<TransformComponent>()->GetPosition().x);
-			child->SetAttribute("y", camera->GetComponent<TransformComponent>()->GetPosition().y);
-			child->SetAttribute("z", camera->GetComponent<TransformComponent>()->GetPosition().z);
-		}
-
-		if (!strcmp(child->Name(), "CameraRotation")) {
-			child->SetAttribute("x", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.x);
-			child->SetAttribute("y", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.y);
-			child->SetAttribute("z", camera->GetComponent<TransformComponent>()->GetOrientation().ijk.z);
-			child->SetAttribute("w", camera->GetComponent<TransformComponent>()->GetOrientation().w);
-		}
-
-		if (!strcmp(child->Name(), "LightPosition")) {
-			child->SetAttribute("x", lightPosition.x);
-			child->SetAttribute("y", lightPosition.y);
-			child->SetAttribute("z", lightPosition.z);
-		}
-
-		if (!strcmp(child->Name(), "LightColor")) {
-			child->SetAttribute("x", lightColor.x);
-			child->SetAttribute("y", lightColor.y);
-			child->SetAttribute("z", lightColor.z);
-			child->SetAttribute("w", lightColor.w);
-		}
-
-		if (!strcmp(child->Name(), "BackgroundColor"))
-		{
-			child->SetAttribute("x", backgroundColor.x);
-			child->SetAttribute("y", backgroundColor.y);
-			child->SetAttribute("z", backgroundColor.z);
-			child->SetAttribute("w", backgroundColor.w);
-		}
-
-		if (!strcmp(child->Name(), "Skybox"))
-		{
-			if(skybox != nullptr)child->SetAttribute("name", currentSkybox);
-		}
-
-		XML.SaveFile("XMLs/SaveFile.xml");
-
-	}
 }
 
 void Scene0::UpdateSkybox(const char* name)

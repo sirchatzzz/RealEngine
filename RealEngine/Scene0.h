@@ -10,12 +10,14 @@
 #include "AssetManager.h"
 #include "Core.h"
 #include "imgui.h"
+#include "SaveSystem.h"
 #include "imgui_impl_opengl3.h"
 #include "tinyxml2.h"
 
 using namespace MATH;
 
-class Scene0 : public Scene {
+class Scene0 : public Scene 
+{
 private:
 
 	std::vector<Ref<Actor>> sceneMeshes;
@@ -29,6 +31,7 @@ private:
 	const char* currentSkybox;
 	Ref<Actor> plane, sphere;
 	ViewPort viewport;
+	SaveSystem saveSystem;
 
 	GLuint shadowMapFBO;
 	GLuint shadowMap;
@@ -44,11 +47,6 @@ private:
 	bool openGUI;
 	bool canRotate;
 
-	//save system
-	XMLDocument XML;
-	XMLElement* rootData;
-	XMLElement* assetsData;
-
 public:
 	explicit Scene0();
 	virtual ~Scene0();
@@ -63,7 +61,5 @@ public:
 	void CreateBuffer();
 	void RenderShadowMap();
 	void HandleGUI();
-	void LoadXML();
-	void ReadXML();
-	void WriteXML();
+
 };
