@@ -38,12 +38,8 @@ private:
 
 	//GUI stuff
 	Vec3 lightPosition;
-	Vec3 cameraPosition;
-	Vec3 position;
-	Vec4 cameraOrientationVector;
 	Vec4 backgroundColor;
 	Vec4 lightColor;
-	Quaternion cameraOrientation;
 	bool openGUI;
 	bool canRotate;
 

@@ -55,26 +55,7 @@ bool Scene0::OnCreate()
 	sphere->OnCreate();
 	sceneMeshes.push_back(sphere);
 
-	//GUI stuff
-	cameraPosition = camera->GetComponent<TransformComponent>()->GetPosition();
-	cameraOrientation = camera->GetComponent<TransformComponent>()->GetOrientation();
-	cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
 	LoadSaveFile();
-	camera->GetComponent<TransformComponent>()->SetPosition(cameraPosition);
-	camera->GetComponent<TransformComponent>()->SetOrientation(cameraOrientation);
-
-
-	for (auto c : sceneMeshes)
-	{
-		position = c->GetComponent<TransformComponent>()->GetPosition();
-		meshesPosition.push_back(position);
-	}
-
-	for (auto c : sceneMeshes)
-	{
-		position = c->GetComponent<TransformComponent>()->GetPosition();
-		meshesNewPosition.push_back(position);
-	}
 
 	return true;
 }
@@ -134,13 +115,29 @@ void Scene0::HandleGUI()
 	ImGui::End();
 
 	ImGui::Begin("Settings");
-	ImGui::SliderFloat3("Camera Position", cameraPosition, -10.0f, 10.0f);
-	camera->GetComponent<TransformComponent>()->SetPosition(cameraPosition);
-	ImGui::SliderFloat4("Camera Rotation", cameraOrientationVector, -1.0f, 1.0f);
-	camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(cameraOrientationVector.x, Vec3(cameraOrientationVector.y, cameraOrientationVector.z, cameraOrientationVector.w)));
+
+	//camera position
+	Vec3 cameraPos = camera->GetComponent<TransformComponent>()->GetPosition();
+	ImGui::SliderFloat3("Camera Position", cameraPos, -10.0f, 10.0f);
+	camera->GetComponent<TransformComponent>()->SetPosition(cameraPos);
+
+	//camera orientation
+	static Vec4 cameraOrient = Vec4(camera->GetComponent<TransformComponent>()->GetOrientation().w, camera->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+																							        camera->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
+																							        camera->GetComponent<TransformComponent>()->GetOrientation().ijk.z);
+	ImGui::SliderFloat4("Camera Rotation", cameraOrient, -1.0f, 1.0f);
+	camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(cameraOrient.w, Vec3(cameraOrient.x, cameraOrient.y, cameraOrient.z)));
+
+	//light position
 	ImGui::SliderFloat3("Light Position", lightPosition, -10.0f, 10.0f);
+
+	//light color
 	ImGui::ColorEdit4("Light Color", lightColor);
+
+	//bg color
 	ImGui::ColorEdit4("Background Color", backgroundColor);
+
+	//skyBoxes
 	if (ImGui::Button("Beach")) UpdateSkybox("SB_Beach");
 	ImGui::SameLine();
 	if (ImGui::Button("Sunset")) UpdateSkybox("SB_Sunset");
@@ -159,9 +156,8 @@ void Scene0::HandleGUI()
 		backgroundColor = Vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
 		lightPosition = Vec3(-10.0f, 4.0f, 6.0f);
-		cameraPosition = Vec3(0.0f, 0.0f, -5.0f);
-		cameraOrientationVector = Vec4(1.0f, 0.0f, 0.0f, 0.0f);
-		cameraOrientation = Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f));
+		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
+		camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f)));
 	}
 	ImGui::End();
 
@@ -340,15 +336,13 @@ void Scene0::LoadSaveFile()
 		{
 			float x, y, z;
 			sscanf_s(child->Attribute("CameraPosition"), "%f,%f,%f", &x, &y, &z);
-			cameraPosition = Vec3(x, y, z);
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(x, y, z));
 		}
 
 		if (!strcmp(child->Name(), "CameraRotation"))
 		{
 			float x, y, z, w;
 			sscanf_s(child->Attribute("CameraRotation"), "%f,%f,%f, %f", &x, &y, &z, &w);
-			cameraOrientation = Quaternion(w, Vec3(x, y, z));
-			cameraOrientationVector = Vec4(cameraOrientation.w, cameraOrientation.ijk.x, cameraOrientation.ijk.y, cameraOrientation.ijk.z);
 		}
 
 		if (!strcmp(child->Name(), "LightPosition"))
