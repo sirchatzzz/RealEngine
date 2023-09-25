@@ -40,6 +40,7 @@ private:
 	Vec3 lightPosition;
 	Vec4 backgroundColor;
 	Vec4 lightColor;
+	Vec4 cameraOrientationVector;
 	bool openGUI;
 	bool canRotate;
 

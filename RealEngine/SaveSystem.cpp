@@ -57,32 +57,6 @@ void SaveSystem::SaveVec4(const char* name, Vec4 vector)
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
-void SaveSystem::SaveQuaternion(const char* name, Quaternion quat)
-{
-	tinyxml2::XMLElement* newChildElement;
-	const tinyxml2::XMLAttribute* attribute;
-
-	char buffer[256];
-	snprintf(buffer, sizeof(buffer), "%f,%f,%f,%f", quat.ijk.x, quat.ijk.y, quat.ijk.z, quat.w);
-
-	rootData = XML.RootElement();
-	assetsData = rootData->FirstChildElement("Data");
-	attribute = assetsData->FindAttribute(name);
-
-	tinyxml2::XMLElement* childElement = assetsData->FirstChildElement(name);
-
-	if (childElement == nullptr) {
-		assetsData->InsertNewChildElement(name);
-		childElement = assetsData->FirstChildElement(name);
-		childElement->SetAttribute(name, buffer);
-	}
-	else {
-		childElement->SetAttribute(name, buffer);
-	}
-
-	XML.SaveFile("XMLs/SaveFile.xml");
-}
-
 void SaveSystem::SaveFloat(const char* name, float flt)
 {
 	tinyxml2::XMLElement* newChildElement;

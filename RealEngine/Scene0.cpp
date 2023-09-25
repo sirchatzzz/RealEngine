@@ -55,6 +55,8 @@ bool Scene0::OnCreate()
 	sphere->OnCreate();
 	sceneMeshes.push_back(sphere);
 
+	cameraOrientationVector = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
 	LoadSaveFile();
 
 	return true;
@@ -122,11 +124,8 @@ void Scene0::HandleGUI()
 	camera->GetComponent<TransformComponent>()->SetPosition(cameraPos);
 
 	//camera orientation
-	static Vec4 cameraOrient = Vec4(camera->GetComponent<TransformComponent>()->GetOrientation().w, camera->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
-																							        camera->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
-																							        camera->GetComponent<TransformComponent>()->GetOrientation().ijk.z);
-	ImGui::SliderFloat4("Camera Rotation", cameraOrient, -1.0f, 1.0f);
-	camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(cameraOrient.w, Vec3(cameraOrient.x, cameraOrient.y, cameraOrient.z)));
+
+	ImGui::SliderFloat4("Camera Rotation", cameraOrientationVector, -1.0f, 1.0f);
 
 	//light position
 	ImGui::SliderFloat3("Light Position", lightPosition, -10.0f, 10.0f);
@@ -150,14 +149,12 @@ void Scene0::HandleGUI()
 	if (ImGui::Button("Reset Everything", ImVec2(306.0, 30.0)))
 	{
 		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
-		camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f)));
+		cameraOrientationVector = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		light->UpdatePosition(Vec3(-10.0f, 4.0f, 6.0f));
 		lightColor = Vec4(1.0f, 1.0f, 1.0f, 1.0f);
 		backgroundColor = Vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
 		lightPosition = Vec3(-10.0f, 4.0f, 6.0f);
-		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
-		camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(1.0f, Vec3(0.0f, 0.0f, 0.0f)));
 	}
 	ImGui::End();
 
@@ -174,7 +171,8 @@ void Scene0::Update(const float deltaTime)
 	if(saveTime > 5.0f)
 	{
 		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
-		saveSystem.SaveQuaternion("CameraRotation", camera->GetComponent<TransformComponent>()->GetOrientation());
+		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
+		camera->GetComponent<TransformComponent>()->GetOrientation().print();
 		saveSystem.SaveVec3("LightPosition", lightPosition);
 		saveSystem.SaveVec4("LightColor", lightColor);
 		saveSystem.SaveVec4("BackgroundColor", backgroundColor);
@@ -185,6 +183,7 @@ void Scene0::Update(const float deltaTime)
 
 	RenderShadowMap();
 	if(openGUI)	HandleGUI();
+	camera->GetComponent<TransformComponent>()->SetOrientation(Quaternion(cameraOrientationVector.w, Vec3(cameraOrientationVector.x, cameraOrientationVector.y, cameraOrientationVector.z)));
 
 }
 
@@ -342,7 +341,8 @@ void Scene0::LoadSaveFile()
 		if (!strcmp(child->Name(), "CameraRotation"))
 		{
 			float x, y, z, w;
-			sscanf_s(child->Attribute("CameraRotation"), "%f,%f,%f, %f", &x, &y, &z, &w);
+			sscanf_s(child->Attribute("CameraRotation"), "%f,%f,%f,%f", &x, &y, &z, &w);
+			cameraOrientationVector = Vec4(x, y, z, w);
 		}
 
 		if (!strcmp(child->Name(), "LightPosition"))

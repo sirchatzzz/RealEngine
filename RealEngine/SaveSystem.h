@@ -20,7 +20,6 @@ public:
 	SaveSystem();
 	void SaveVec3(const char* name, Vec3 vector);
 	void SaveVec4(const char* name, Vec4 vector);
-	void SaveQuaternion(const char* name, Quaternion quat);
 	void SaveFloat(const char* name, float flt);
 	void SaveSkybox(const char* name, const char* skyBox);
 	void LoadXML();
