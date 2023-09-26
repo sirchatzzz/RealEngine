@@ -6,7 +6,8 @@
 #include "Debug.h"
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
-backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false), assetsData(nullptr), rootData(nullptr)
+backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false), assetsData(nullptr), rootData(nullptr),
+objectSelected(false), selectedObject(0), objectPicker(false)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -39,23 +40,12 @@ bool Scene0::OnCreate()
 	light->UpdatePosition(Vec3(-10.0f, 4.0f, 6.0f));
 	lightPosition = light->GetPosition();
 
-	//plane
-	plane = std::make_shared<Actor>(nullptr);
-	plane->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Plane"));
-	plane->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-	plane->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -6.0f), Quaternion(), Vec3(0.5f, 0.5f, 0.5f));
-	plane->OnCreate();
-	sceneMeshes.push_back(plane);
-
-	//sphere
-	sphere = std::make_shared<Actor>(nullptr);
-	sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
-	sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_EvilEye"));
-	sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(0.75f, Vec3(0.0f, -0.7f, 0.0f)), Vec3(0.5f, 0.5f, 0.5f));
-	sphere->OnCreate();
-	sceneMeshes.push_back(sphere);
-
 	cameraOrientationVector = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
+
+	for(auto c : sceneActors)
+	{
+		if(!sceneActors.empty()) c->OnCreate();
+	}
 
 	LoadSaveFile();
 
@@ -92,12 +82,15 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 		break;
 
 	case SDL_MOUSEBUTTONDOWN:
+		if(objectPicker)
+		{
+			currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
+			lastMousePos = currentMousePos;
 
-		currentMousePos = Vec2(static_cast<float>(sdlEvent.button.x), static_cast<float>(sdlEvent.button.y));
-		lastMousePos = currentMousePos;
-
-		objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
-		//printf("0x%X %d\n", objID, objID);
+			objID = Pick(sdlEvent.button.x, sdlEvent.button.y);
+			printf("0x%X %d\n", objID, objID);
+			selectedObject = objID;
+		}
 		break;
 
 	case SDL_MOUSEBUTTONUP:
@@ -111,6 +104,7 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 
 void Scene0::HandleGUI()
 {
+	objectPicker = !ImGui::IsAnyItemHovered();
 
 	ImGui::Begin("Frame rate", &openGUI, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBackground);
 	ImGui::Text("%.1f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -158,6 +152,43 @@ void Scene0::HandleGUI()
 	}
 	ImGui::End();
 
+	//meshes
+	ImGui::Begin("Meshes");
+	if (ImGui::Button("Cube")) 
+	{
+		Ref<Actor> cube = std::make_shared<Actor>(nullptr);
+		cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
+		cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+		cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+		sceneActors.push_back(cube);
+	}
+	ImGui::End();
+
+	//meshes settings
+	if (objectSelected) 
+	{
+		ImGui::Begin("Mesh Settings");
+
+		//position
+		Vec3 position = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetPosition();
+		ImGui::SliderFloat3("Position", position, -10.0f, 10.0f);
+		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetPosition(position);
+
+		//rotation
+		Vec3 scale = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetScale();
+		ImGui::SliderFloat3("Scale", scale, -10.0f, 10.0f);
+		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetScale(scale);
+
+		//scale
+		Vec4 orient = Vec4(sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
+												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
+												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
+		ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
+		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
+		ImGui::End();
+	}
+
 	light->UpdatePosition(lightPosition);
 }
 
@@ -170,6 +201,18 @@ void Scene0::Update(const float deltaTime)
 
 	if(saveTime > 5.0f)
 	{
+		for(int i = 0; i < sceneActors.size(); ++i)
+		{
+			std::string pos = "MeshPosition";
+			saveSystem.SaveVec3((pos + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetPosition());
+			std::string orient = "MeshOrientation";
+			saveSystem.SaveVec4((orient + std::to_string(i)).c_str(), Vec4(sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
+																	  	   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
+																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().w));
+			std::string scale = "MeshScale";
+			saveSystem.SaveVec3((scale + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
+		}
 		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
 		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
 		camera->GetComponent<TransformComponent>()->GetOrientation().print();
@@ -224,14 +267,14 @@ void Scene0::Render() const
 	glUniform1i(glGetUniformLocation(shader->GetProgram(), "shadowMap"), 0);
 
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, plane->GetComponent<MaterialComponent>()->getTextureID());
-	glUniform1i(glGetUniformLocation(shader->GetProgram(), "diffuseTexture"), 1);
-	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, plane->getModelMatrix());
-	plane->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 
-	glBindTexture(GL_TEXTURE_2D, sphere->GetComponent<MaterialComponent>()->getTextureID());
-	glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
-	sphere->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	for (int i = 0; i < sceneActors.size(); ++i)
+	{
+		glBindTexture(GL_TEXTURE_2D, sceneActors[i]->GetComponent<MaterialComponent>()->getTextureID());
+		glUniform1i(glGetUniformLocation(shader->GetProgram(), "diffuseTexture"), 1);
+		glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
+		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	}
 
 	glUseProgram(0);
 }
@@ -276,9 +319,11 @@ void Scene0::RenderShadowMap()
 
 	glUniformMatrix4fv(shadowShader->GetUniformID("lightSpaceMatrix"), 1, GL_FALSE, light->GetLightSpaceMatrix());
 
-	glBindTexture(GL_TEXTURE_2D, sphere->GetComponent<MaterialComponent>()->getTextureID());
-	glUniformMatrix4fv(shadowShader->GetUniformID("model"), 1, GL_FALSE, sphere->getModelMatrix());
-	sphere->GetComponent<MeshComponent>()->Render();
+	for (int i = 0; i < sceneActors.size(); ++i)
+	{
+		glUniformMatrix4fv(shadowShader->GetUniformID("model"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
+		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glCullFace(GL_BACK);
@@ -293,21 +338,30 @@ int Scene0::Pick(int x, int y) {
 	glUseProgram(colorPickerShader->GetProgram());
 
 	glUniformMatrix4fv(colorPickerShader->GetUniformID("projectionMatrix"), 1, GL_FALSE, camera->GetProjectionMatrix());
-	glUniformMatrix4fv(colorPickerShader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetRotationMatrix());
+	glUniformMatrix4fv(colorPickerShader->GetUniformID("viewMatrix"), 1, GL_FALSE, camera->GetViewMatrix());
 
-	//for (GLuint i = 0; i < redCheckers.size(); i++) {
-	//	glUniformMatrix4fv(colorPickerShader->GetUniformID("modelMatrix"), 1, GL_FALSE, redCheckers[i]->getModelMatrix());
-	//	glUniform1ui(colorPickerShader->GetUniformID("colorID"), i);
-	//	redCheckers[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
-	//}
+	for (int i = 0; i < sceneActors.size(); ++i)
+	{
+		glUniformMatrix4fv(colorPickerShader->GetUniformID("modelMatrix"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
+		glUniform1ui(colorPickerShader->GetUniformID("colorID"), i);
+		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+	}
 
 	glUseProgram(0);
 
 	GLuint colorIndex;
 	glReadPixels(x, viewport.height - y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, &colorIndex);
 	colorIndex &= 0x00FFFFFF; /// This zeros out the alpha component
-	if (colorIndex == 0x00FFFFFF) return -1; /// Picked nothing
-	else return colorIndex;
+	if (colorIndex == 0x00FFFFFF) 
+	{
+		objectSelected = false;
+		return -1;
+	}
+	else
+	{
+		objectSelected = true;
+		return colorIndex;
+	}
 }
 
 void Scene0::UpdateSkybox(const char* name)
@@ -328,6 +382,10 @@ void Scene0::LoadSaveFile()
 	rootData = XML.RootElement();
 
 	assetsData = rootData->FirstChildElement("Data");
+
+	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+	{
+	}
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 	{
@@ -370,6 +428,33 @@ void Scene0::LoadSaveFile()
 		if (!strcmp(child->Name(), "Skybox"))
 		{
 			UpdateSkybox(child->Attribute("Skybox"));
+		}
+
+		for (int i = 0; i < sceneActors.size(); ++i)
+		{
+			std::string pos = "MeshPosition";
+			if (!strcmp(child->Name(), (pos + std::to_string(i)).c_str()))
+			{
+				float x, y, z;
+				sscanf_s(child->Attribute((pos + std::to_string(i)).c_str()), "%f, %f, %f", &x, &y, &z);
+				sceneActors[i]->GetComponent<TransformComponent>()->SetPosition(Vec3(x, y, z));
+			}
+
+			std::string orient = "MeshOrientation";
+			if (!strcmp(child->Name(), (orient + std::to_string(i)).c_str()))
+			{
+				float x, y, z, w;
+				sscanf_s(child->Attribute((orient + std::to_string(i)).c_str()), "%f,%f,%f,%f", &x, &y, &z, &w);
+				sceneActors[i]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(w, Vec3(x, y, z)));
+			}
+
+			std::string scale = "MeshScale";
+			if (!strcmp(child->Name(), (scale + std::to_string(i)).c_str()))
+			{
+				float x, y, z;
+				sscanf_s(child->Attribute((scale + std::to_string(i)).c_str()), "%f,%f,%f", &x, &y, &z);
+				sceneActors[i]->GetComponent<TransformComponent>()->SetScale(Vec3(x, y, z));
+			}
 		}
 	}
 }

@@ -19,10 +19,10 @@ using namespace MATH;
 class Scene0 : public Scene 
 {
 private:
+	std::vector<Ref<Actor>> sceneActors;
 
-	std::vector<Ref<Actor>> sceneMeshes;
-	std::vector<Vec3> meshesPosition;
-	std::vector<Vec3> meshesNewPosition;
+	Ref<Actor> cube1;
+	Ref<Actor> cube2;
 
 	Ref<AssetManager> assetManager;
 	Ref<CameraActor>camera;
@@ -41,8 +41,11 @@ private:
 	Vec4 backgroundColor;
 	Vec4 lightColor;
 	Vec4 cameraOrientationVector;
+	bool objectPicker;
 	bool openGUI;
 	bool canRotate;
+	bool objectSelected;
+	unsigned int selectedObject;
 
 	//save system
 	tinyxml2::XMLDocument XML;
