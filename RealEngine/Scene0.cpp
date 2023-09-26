@@ -197,6 +197,11 @@ void Scene0::HandleGUI()
 												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
 		ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
 		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
+		//delete button
+		if(ImGui::Button("Delete"))
+		{
+
+		}
 
 		ImGui::End();
 	}
