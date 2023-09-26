@@ -83,6 +83,32 @@ void SaveSystem::SaveFloat(const char* name, float flt)
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
+void SaveSystem::SaveInt(const char* name, int nmbr)
+{
+	tinyxml2::XMLElement* newChildElement;
+	const tinyxml2::XMLAttribute* attribute;
+
+	char buffer[256];
+	snprintf(buffer, sizeof(buffer), "%i", nmbr);
+
+	rootData = XML.RootElement();
+	assetsData = rootData->FirstChildElement("Data");
+	attribute = assetsData->FindAttribute(name);
+
+	tinyxml2::XMLElement* childElement = assetsData->FirstChildElement(name);
+
+	if (childElement == nullptr) {
+		assetsData->InsertNewChildElement(name);
+		childElement = assetsData->FirstChildElement(name);
+		childElement->SetAttribute(name, buffer);
+	}
+	else {
+		childElement->SetAttribute(name, buffer);
+	}
+
+	XML.SaveFile("XMLs/SaveFile.xml");
+}
+
 void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 {
 	tinyxml2::XMLElement* newChildElement;

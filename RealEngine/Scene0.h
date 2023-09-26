@@ -46,6 +46,7 @@ private:
 	bool canRotate;
 	bool objectSelected;
 	unsigned int selectedObject;
+	int cubeButton;
 
 	//save system
 	tinyxml2::XMLDocument XML;

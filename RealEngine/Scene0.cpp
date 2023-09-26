@@ -7,7 +7,7 @@
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
 backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false), assetsData(nullptr), rootData(nullptr),
-objectSelected(false), selectedObject(0), objectPicker(false)
+objectSelected(false), selectedObject(0), objectPicker(false), cubeButton(0)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -140,7 +140,7 @@ void Scene0::HandleGUI()
 	if (ImGui::Button("Snow")) UpdateSkybox("SB_Snow");
 	ImGui::SameLine();
 	if (ImGui::Button("None")) skybox = nullptr;
-	if (ImGui::Button("Reset Everything", ImVec2(306.0, 30.0)))
+	if (ImGui::Button("Reset", ImVec2(306.0, 30.0)))
 	{
 		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
 		cameraOrientationVector = Vec4(0.0f, 0.0f, 0.0f, 1.0f);
@@ -156,6 +156,8 @@ void Scene0::HandleGUI()
 	ImGui::Begin("Meshes");
 	if (ImGui::Button("Cube")) 
 	{
+		++cubeButton;
+		printf("%i", cubeButton);
 		Ref<Actor> cube = std::make_shared<Actor>(nullptr);
 		cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
 		cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
@@ -186,6 +188,7 @@ void Scene0::HandleGUI()
 												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
 		ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
 		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
+
 		ImGui::End();
 	}
 
@@ -213,6 +216,7 @@ void Scene0::Update(const float deltaTime)
 			std::string scale = "MeshScale";
 			saveSystem.SaveVec3((scale + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
 		}
+		saveSystem.SaveInt("CubesNumber", cubeButton);
 		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
 		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
 		camera->GetComponent<TransformComponent>()->GetOrientation().print();
@@ -385,6 +389,20 @@ void Scene0::LoadSaveFile()
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 	{
+		if (!strcmp(child->Name(), "CubesNumber"))
+		{
+			int number = 0;
+			sscanf_s(child->Attribute("CubesNumber"), "%i", &number);
+			for(int i = 0; i <= number; ++i)
+			{
+				Ref<Actor> cube = std::make_shared<Actor>(nullptr);
+				cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
+				cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+				cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+				cubeButton = number;
+				sceneActors.push_back(cube);
+			}
+		}
 	}
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())

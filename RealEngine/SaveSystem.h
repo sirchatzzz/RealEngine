@@ -22,6 +22,7 @@ public:
 	void SaveVec4(const char* name, Vec4 vector);
 	void SaveFloat(const char* name, float flt);
 	void SaveSkybox(const char* name, const char* skyBox);
+	void SaveInt(const char* name, int nmbr);
 	void LoadXML();
 
 };
