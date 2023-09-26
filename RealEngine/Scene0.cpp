@@ -157,12 +157,21 @@ void Scene0::HandleGUI()
 	if (ImGui::Button("Cube")) 
 	{
 		++cubeButton;
-		printf("%i", cubeButton);
 		Ref<Actor> cube = std::make_shared<Actor>(nullptr);
 		cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
 		cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
 		cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 		sceneActors.push_back(cube);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Sphere"))
+	{
+		++sphereButton;
+		Ref<Actor> sphere = std::make_shared<Actor>(nullptr);
+		sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
+		sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+		sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+		sceneActors.push_back(sphere);
 	}
 	ImGui::End();
 
@@ -217,6 +226,7 @@ void Scene0::Update(const float deltaTime)
 			saveSystem.SaveVec3((scale + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
 		}
 		saveSystem.SaveInt("CubesNumber", cubeButton);
+		saveSystem.SaveInt("SpheresNumber", sphereButton);
 		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
 		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
 		camera->GetComponent<TransformComponent>()->GetOrientation().print();
@@ -393,7 +403,7 @@ void Scene0::LoadSaveFile()
 		{
 			int number = 0;
 			sscanf_s(child->Attribute("CubesNumber"), "%i", &number);
-			for(int i = 0; i <= number; ++i)
+			for(int i = 0; i < number; ++i)
 			{
 				Ref<Actor> cube = std::make_shared<Actor>(nullptr);
 				cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
@@ -401,6 +411,21 @@ void Scene0::LoadSaveFile()
 				cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
 				cubeButton = number;
 				sceneActors.push_back(cube);
+			}
+		}
+
+		if (!strcmp(child->Name(), "SpheresNumber"))
+		{
+			int number = 0;
+			sscanf_s(child->Attribute("SpheresNumber"), "%i", &number);
+			for (int i = 0; i < number; ++i)
+			{
+				Ref<Actor> sphere = std::make_shared<Actor>(nullptr);
+				sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
+				sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+				sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+				sphereButton = number;
+				sceneActors.push_back(sphere);
 			}
 		}
 	}

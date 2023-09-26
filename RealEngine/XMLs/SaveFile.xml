@@ -1,36 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
-        <MeshPosition0 MeshPosition0="4.762000,0.000000,-5.000000"/>
+        <MeshPosition0 MeshPosition0="4.286000,0.000000,-5.000000"/>
         <MeshOrientation0 MeshOrientation0="0.000000,0.000000,0.000000,1.000000"/>
         <MeshScale0 MeshScale0="1.000000,1.000000,1.000000"/>
-        <CubesNumber CubesNumber="7"/>
+        <CubesNumber CubesNumber="2"/>
+        <SpheresNumber SpheresNumber="2"/>
         <CameraPosition CameraPosition="0.000000,0.000000,-5.000000"/>
         <CameraRotation CameraRotation="0.000000,0.000000,0.000000,1.000000"/>
         <LightPosition LightPosition="-10.000000,4.000000,6.000000"/>
         <LightColor LightColor="1.000000,1.000000,1.000000,1.000000"/>
         <BackgroundColor BackgroundColor="0.000000,0.000000,0.000000,0.000000"/>
         <Skybox Skybox="SB_Beach"/>
-        <MeshPosition1 MeshPosition1="-5.714000,0.000000,-5.000000"/>
+        <MeshPosition1 MeshPosition1="4.762000,-2.857000,-5.000000"/>
         <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
         <MeshScale1 MeshScale1="1.000000,1.000000,1.000000"/>
         <MeshPosition2 MeshPosition2="0.000000,-2.381000,-5.000000"/>
         <MeshOrientation2 MeshOrientation2="0.000000,0.000000,0.000000,1.000000"/>
         <MeshScale2 MeshScale2="1.000000,1.000000,1.000000"/>
-        <MeshPosition3 MeshPosition3="0.000000,2.857000,-5.000000"/>
+        <MeshPosition3 MeshPosition3="-3.810000,-3.333000,-5.000000"/>
         <MeshOrientation3 MeshOrientation3="0.000000,0.000000,0.000000,1.000000"/>
         <MeshScale3 MeshScale3="1.000000,1.000000,1.000000"/>
-        <MeshPosition4 MeshPosition4="-2.857000,3.810000,-5.000000"/>
-        <MeshOrientation4 MeshOrientation4="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale4 MeshScale4="1.000000,1.000000,1.000000"/>
-        <MeshPosition5 MeshPosition5="3.810000,-2.857000,-5.000000"/>
-        <MeshOrientation5 MeshOrientation5="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale5 MeshScale5="1.000000,1.000000,1.000000"/>
-        <MeshPosition6 MeshPosition6="-2.381000,-1.429000,-5.000000"/>
-        <MeshOrientation6 MeshOrientation6="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale6 MeshScale6="1.000000,1.000000,1.000000"/>
-        <MeshPosition7 MeshPosition7="5.714000,0.000000,-5.000000"/>
-        <MeshOrientation7 MeshOrientation7="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale7 MeshScale7="1.000000,1.000000,1.000000"/>
     </Data>
 </Root>

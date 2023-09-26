@@ -47,6 +47,7 @@ private:
 	bool objectSelected;
 	unsigned int selectedObject;
 	int cubeButton;
+	int sphereButton;
 
 	//save system
 	tinyxml2::XMLDocument XML;
