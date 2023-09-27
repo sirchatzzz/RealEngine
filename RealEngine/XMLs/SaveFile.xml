@@ -1,24 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
-        <MeshPosition0 MeshPosition0="-4.242000,0.000000,-5.000000"/>
-        <MeshOrientation0 MeshOrientation0="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale0 MeshScale0="1.000000,1.000000,1.000000"/>
-        <CubesNumber CubesNumber="2"/>
-        <SpheresNumber SpheresNumber="1"/>
+        <MeshesCount MeshesCount="-1"/>
         <CameraPosition CameraPosition="0.000000,0.000000,-5.000000"/>
         <CameraRotation CameraRotation="0.000000,0.000000,0.000000,1.000000"/>
         <LightPosition LightPosition="-10.000000,4.000000,6.000000"/>
         <LightColor LightColor="1.000000,1.000000,1.000000,1.000000"/>
         <BackgroundColor BackgroundColor="0.000000,0.000000,0.000000,0.000000"/>
         <Skybox Skybox="SB_Beach"/>
-        <MeshPosition1 MeshPosition1="0.000000,0.000000,-5.000000"/>
-        <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale1 MeshScale1="1.000000,1.000000,1.000000"/>
-        <MeshPosition2 MeshPosition2="3.939000,0.000000,-5.000000"/>
-        <MeshOrientation2 MeshOrientation2="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale2 MeshScale2="1.000000,1.000000,1.000000"/>
-        <Material1 Material1="M_EvilEye"/>
-        <Material2 Material2="M_WhiteChecker"/>
     </Data>
 </Root>

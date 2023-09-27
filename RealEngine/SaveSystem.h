@@ -24,6 +24,7 @@ public:
 	void SaveSkybox(const char* name, const char* skyBox);
 	void SaveInt(const char* name, int nmbr);
 	void SaveChar(const char* name, const char* toSave);
+	void DeleteMesh(const char* name);
 	void LoadXML();
 
 };

@@ -42,13 +42,13 @@ private:
 	Vec4 lightColor;
 	Vec4 cameraOrientationVector;
 	const char* materialName;
+	const char* meshName;
 	bool objectPicker;
 	bool openGUI;
 	bool canRotate;
 	bool objectSelected;
 	unsigned int selectedObject;
-	int cubeButton;
-	int sphereButton;
+	int meshesCount;
 
 	//save system
 	tinyxml2::XMLDocument XML;
@@ -70,5 +70,5 @@ public:
 	void RenderShadowMap();
 	void HandleGUI();
 	void LoadSaveFile();
-
+	void Save();
 };

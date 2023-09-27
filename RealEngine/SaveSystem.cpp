@@ -121,13 +121,41 @@ void SaveSystem::SaveChar(const char* name, const char* toSave)
 	tinyxml2::XMLElement* childElement = assetsData->FirstChildElement(name);
 
 	if (childElement == nullptr) {
-		assetsData->InsertNewChildElement(name);  // Add the new child element with the specified name.
+		assetsData->InsertNewChildElement(name);
 		childElement = assetsData->FirstChildElement(name);
 		childElement->SetAttribute(name, toSave);
 	}
 	else {
 		childElement->SetAttribute(name, toSave);
 	}
+	XML.SaveFile("XMLs/SaveFile.xml");
+}
+
+void SaveSystem::DeleteMesh(const char* name)
+{
+	tinyxml2::XMLElement* childToDelete = nullptr;
+	const tinyxml2::XMLAttribute* attribute;
+
+	rootData = XML.RootElement();
+	assetsData = rootData->FirstChildElement("Data");
+	attribute = assetsData->FindAttribute(name);
+
+	for(tinyxml2::XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
+	{
+		if (!strcmp(child->Name(), name))
+		{
+			childToDelete = child;
+		}
+
+		if (!strcmp(child->Name(), "MeshesCount"))
+		{
+			int i;
+			sscanf_s(child->Attribute("MeshesCount"), "%i", &i);
+			i -= 1;
+			child->SetAttribute("MeshesCount", std::to_string(i).c_str());
+		}
+	}
+	assetsData->DeleteChild(childToDelete);
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
@@ -143,7 +171,7 @@ void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 	tinyxml2::XMLElement* childElement = assetsData->FirstChildElement(name);
 
 	if (childElement == nullptr) {
-		assetsData->InsertNewChildElement(name);  // Add the new child element with the specified name.
+		assetsData->InsertNewChildElement(name);
 		childElement = assetsData->FirstChildElement(name);
 		childElement->SetAttribute(name, skyBox);
 	}

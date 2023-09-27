@@ -7,7 +7,7 @@
 
 Scene0::Scene0() : shadowMap(0), shadowMapFBO(0), lightColor(Vec3(1.0f, 1.0f, 1.0f)),
 backgroundColor(Vec4(0.0f, 0.0f, 0.0f, 0.0f)), currentSkybox(nullptr), openGUI(false), canRotate(false), assetsData(nullptr), rootData(nullptr),
-objectSelected(false), selectedObject(0), objectPicker(false), cubeButton(0)
+objectSelected(false), selectedObject(0), objectPicker(false), meshesCount(-1)
 {
 
 	Debug::Info("Created Scene0: ", __FILE__, __LINE__);
@@ -74,6 +74,9 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 			break;
 		case SDL_SCANCODE_R:
 			//canRotate = !canRotate;
+			break;
+		case SDL_SCANCODE_S:
+			Save();
 			break;
 		}
 		break;
@@ -154,24 +157,28 @@ void Scene0::HandleGUI()
 
 	//meshes
 	ImGui::Begin("Meshes");
-	if (ImGui::Button("Cube")) 
+	if (ImGui::Button("SM_Cube")) 
 	{
-		++cubeButton;
-		Ref<Actor> cube = std::make_shared<Actor>(nullptr);
-		cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
-		cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-		cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-		sceneActors.push_back(cube);
+		++meshesCount;
+		meshName = "SM_Cube";
+		Ref<Actor> actor = std::make_shared<Actor>(nullptr);
+		actor->AddComponent(assetManager->GetComponent<MeshComponent>(meshName));
+		actor->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+		actor->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+		sceneActors.push_back(actor);
+		saveSystem.SaveChar(("StaticMesh" + std::to_string(meshesCount)).c_str(), meshName);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Sphere"))
+	if (ImGui::Button("SM_Sphere"))
 	{
-		++sphereButton;
-		Ref<Actor> sphere = std::make_shared<Actor>(nullptr);
-		sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
-		sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-		sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-		sceneActors.push_back(sphere);
+		++meshesCount;
+		meshName = "SM_Sphere";
+		Ref<Actor> actor = std::make_shared<Actor>(nullptr);
+		actor->AddComponent(assetManager->GetComponent<MeshComponent>(meshName));
+		actor->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+		actor->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+		sceneActors.push_back(actor);
+		saveSystem.SaveChar(("StaticMesh" + std::to_string(meshesCount)).c_str(), meshName);
 	}
 	ImGui::End();
 
@@ -208,8 +215,11 @@ void Scene0::HandleGUI()
 		}
 		if (ImGui::Button("Delete Object"))
 		{
+			saveSystem.DeleteMesh(("StaticMesh" + std::to_string(selectedObject)).c_str());
 			sceneActors[selectedObject]->RemoveAllComponents();
 			if (selectedObject < sceneActors.size()) sceneActors.erase(sceneActors.begin() + selectedObject);
+			--meshesCount;
+			saveSystem.SaveInt("MeshesCount", meshesCount);
 		}
 		ImGui::End();
 
@@ -253,24 +263,7 @@ void Scene0::Update(const float deltaTime)
 
 	if(saveTime > 5.0f)
 	{
-		for(int i = 0; i < sceneActors.size(); ++i)
-		{
-			saveSystem.SaveVec3(("MeshPosition" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetPosition());
-			saveSystem.SaveVec4(("MeshOrientation" + std::to_string(i)).c_str(), Vec4(sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
-																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
-																	  	   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
-																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().w));
-			saveSystem.SaveVec3(("MeshScale" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
-		}
-		saveSystem.SaveInt("CubesNumber", cubeButton);
-		saveSystem.SaveInt("SpheresNumber", sphereButton);
-		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
-		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
-		saveSystem.SaveVec3("LightPosition", lightPosition);
-		saveSystem.SaveVec4("LightColor", lightColor);
-		saveSystem.SaveVec4("BackgroundColor", backgroundColor);
-		saveSystem.SaveSkybox("Skybox", currentSkybox);
-		printf("Progress Saved! \n");
+		Save();
 		saveTime = 0.0f;
 	}
 
@@ -438,33 +431,22 @@ void Scene0::LoadSaveFile()
 
 	for (XMLElement* child = assetsData->FirstChildElement(); child != nullptr; child = child->NextSiblingElement())
 	{
-		if (!strcmp(child->Name(), "CubesNumber"))
+		if (!strcmp(child->Name(), "MeshesCount"))
 		{
-			int number = 0;
-			sscanf_s(child->Attribute("CubesNumber"), "%i", &number);
-			for(int i = 0; i < number; ++i)
-			{
-				Ref<Actor> cube = std::make_shared<Actor>(nullptr);
-				cube->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Cube"));
-				cube->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-				cube->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-				cubeButton = number;
-				sceneActors.push_back(cube);
-			}
+			int i;
+			sscanf_s(child->Attribute("MeshesCount"), "%i", &i);
+			meshesCount = i;
 		}
 
-		if (!strcmp(child->Name(), "SpheresNumber"))
+		for (int i = 0; i <= meshesCount + 1; ++i) 
 		{
-			int number = 0;
-			sscanf_s(child->Attribute("SpheresNumber"), "%i", &number);
-			for (int i = 0; i < number; ++i)
+			if (!strcmp(child->Name(), ("StaticMesh" + std::to_string(i)).c_str()))
 			{
-				Ref<Actor> sphere = std::make_shared<Actor>(nullptr);
-				sphere->AddComponent(assetManager->GetComponent<MeshComponent>("SM_Sphere"));
-				sphere->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
-				sphere->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
-				sphereButton = number;
-				sceneActors.push_back(sphere);
+				Ref<Actor> actor = std::make_shared<Actor>(nullptr);
+				actor->AddComponent<MeshComponent>(assetManager->GetComponent<MeshComponent>(child->Attribute(("StaticMesh" + std::to_string(i)).c_str())));
+				actor->AddComponent<TransformComponent>(nullptr, Vec3(0.0f, 0.0f, -5.0f), Quaternion(), Vec3(1.0f, 1.0f, 1.0f));
+				actor->AddComponent(assetManager->GetComponent<MaterialComponent>("M_CheckerBoard"));
+				sceneActors.push_back(actor);
 			}
 		}
 	}
@@ -542,4 +524,25 @@ void Scene0::LoadSaveFile()
 			}
 		}
 	}
+}
+
+void Scene0::Save()
+{
+	for (int i = 0; i < sceneActors.size(); ++i)
+	{
+		saveSystem.SaveVec3(("MeshPosition" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetPosition());
+		saveSystem.SaveVec4(("MeshOrientation" + std::to_string(i)).c_str(), Vec4(sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+			sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
+			sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
+			sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().w));
+		saveSystem.SaveVec3(("MeshScale" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
+	}
+	saveSystem.SaveInt("MeshesCount", meshesCount);
+	saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
+	saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
+	saveSystem.SaveVec3("LightPosition", lightPosition);
+	saveSystem.SaveVec4("LightColor", lightColor);
+	saveSystem.SaveVec4("BackgroundColor", backgroundColor);
+	saveSystem.SaveSkybox("Skybox", currentSkybox);
+	printf("Progress Saved \n");
 }
