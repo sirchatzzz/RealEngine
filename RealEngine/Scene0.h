@@ -41,6 +41,7 @@ private:
 	Vec4 backgroundColor;
 	Vec4 lightColor;
 	Vec4 cameraOrientationVector;
+	const char* materialName;
 	bool objectPicker;
 	bool openGUI;
 	bool canRotate;

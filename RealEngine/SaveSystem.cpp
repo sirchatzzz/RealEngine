@@ -109,6 +109,28 @@ void SaveSystem::SaveInt(const char* name, int nmbr)
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
+void SaveSystem::SaveChar(const char* name, const char* toSave)
+{
+	tinyxml2::XMLElement* newChildElement;
+	const tinyxml2::XMLAttribute* attribute;
+
+	rootData = XML.RootElement();
+	assetsData = rootData->FirstChildElement("Data");
+	attribute = assetsData->FindAttribute(name);
+
+	tinyxml2::XMLElement* childElement = assetsData->FirstChildElement(name);
+
+	if (childElement == nullptr) {
+		assetsData->InsertNewChildElement(name);  // Add the new child element with the specified name.
+		childElement = assetsData->FirstChildElement(name);
+		childElement->SetAttribute(name, toSave);
+	}
+	else {
+		childElement->SetAttribute(name, toSave);
+	}
+	XML.SaveFile("XMLs/SaveFile.xml");
+}
+
 void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 {
 	tinyxml2::XMLElement* newChildElement;

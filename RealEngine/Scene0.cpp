@@ -181,28 +181,63 @@ void Scene0::HandleGUI()
 		ImGui::Begin("Mesh Settings");
 
 		//position
-		Vec3 position = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetPosition();
-		ImGui::SliderFloat3("Position", position, -10.0f, 10.0f);
-		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetPosition(position);
-
-		//rotation
-		Vec3 scale = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetScale();
-		ImGui::SliderFloat3("Scale", scale, -10.0f, 10.0f);
-		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetScale(scale);
-
-		//scale
-		Vec4 orient = Vec4(sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
-												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
-												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
-												sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
-		ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
-		if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
-		//delete button
-		if(ImGui::Button("Delete"))
+		if(sceneActors.size() > selectedObject)
 		{
-
+			Vec3 position = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetPosition();
+			ImGui::SliderFloat3("Position", position, -10.0f, 10.0f);
+			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetPosition(position);
 		}
 
+		//rotation
+		if (sceneActors.size() > selectedObject)
+		{
+			Vec3 scale = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetScale();
+			ImGui::SliderFloat3("Scale", scale, -10.0f, 10.0f);
+			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetScale(scale);
+		}
+
+		//scale
+		if (sceneActors.size() > selectedObject)
+		{
+			Vec4 orient = Vec4(sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
+				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
+				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
+			ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
+			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
+		}
+		if (ImGui::Button("Delete Object"))
+		{
+			sceneActors[selectedObject]->RemoveAllComponents();
+			if (selectedObject < sceneActors.size()) sceneActors.erase(sceneActors.begin() + selectedObject);
+		}
+		ImGui::End();
+
+		//material settings
+		ImGui::Begin("Materials");
+		if(ImGui::Button("M_CheckerBoard"))
+		{
+			materialName = "M_CheckerBoard";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("M_EvilEye")) 
+		{
+			materialName = "M_EvilEye";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("M_WhiteChecker"))
+		{
+			materialName = "M_WhiteChecker";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
 		ImGui::End();
 	}
 
@@ -220,21 +255,17 @@ void Scene0::Update(const float deltaTime)
 	{
 		for(int i = 0; i < sceneActors.size(); ++i)
 		{
-			std::string pos = "MeshPosition";
-			saveSystem.SaveVec3((pos + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetPosition());
-			std::string orient = "MeshOrientation";
-			saveSystem.SaveVec4((orient + std::to_string(i)).c_str(), Vec4(sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
+			saveSystem.SaveVec3(("MeshPosition" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetPosition());
+			saveSystem.SaveVec4(("MeshOrientation" + std::to_string(i)).c_str(), Vec4(sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.x,
 																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
 																	  	   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
 																		   sceneActors[i]->GetComponent<TransformComponent>()->GetOrientation().w));
-			std::string scale = "MeshScale";
-			saveSystem.SaveVec3((scale + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
+			saveSystem.SaveVec3(("MeshScale" + std::to_string(i)).c_str(), sceneActors[i]->GetComponent<TransformComponent>()->GetScale());
 		}
 		saveSystem.SaveInt("CubesNumber", cubeButton);
 		saveSystem.SaveInt("SpheresNumber", sphereButton);
 		saveSystem.SaveVec3("CameraPosition", camera->GetComponent<TransformComponent>()->GetPosition());
 		saveSystem.SaveVec4("CameraRotation", cameraOrientationVector);
-		camera->GetComponent<TransformComponent>()->GetOrientation().print();
 		saveSystem.SaveVec3("LightPosition", lightPosition);
 		saveSystem.SaveVec4("LightColor", lightColor);
 		saveSystem.SaveVec4("BackgroundColor", backgroundColor);
@@ -289,10 +320,13 @@ void Scene0::Render() const
 
 	for (int i = 0; i < sceneActors.size(); ++i)
 	{
-		glBindTexture(GL_TEXTURE_2D, sceneActors[i]->GetComponent<MaterialComponent>()->getTextureID());
-		glUniform1i(glGetUniformLocation(shader->GetProgram(), "diffuseTexture"), 1);
-		glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
-		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+		if (sceneActors[i]->GetComponent<MaterialComponent>() != nullptr) 
+		{
+			glBindTexture(GL_TEXTURE_2D, sceneActors[i]->GetComponent<MaterialComponent>()->getTextureID());
+			glUniform1i(glGetUniformLocation(shader->GetProgram(), "diffuseTexture"), 1);
+		}
+		if(sceneActors[i]->getModelMatrix() != nullptr) glUniformMatrix4fv(shader->GetUniformID("model"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
+		if(sceneActors[i]->GetComponent<MeshComponent>() != nullptr) sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
 
 	glUseProgram(0);
@@ -341,7 +375,7 @@ void Scene0::RenderShadowMap()
 	for (int i = 0; i < sceneActors.size(); ++i)
 	{
 		glUniformMatrix4fv(shadowShader->GetUniformID("model"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
-		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+		if (sceneActors[i]->GetComponent<MeshComponent>() != nullptr) sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -363,7 +397,7 @@ int Scene0::Pick(int x, int y) {
 	{
 		glUniformMatrix4fv(colorPickerShader->GetUniformID("modelMatrix"), 1, GL_FALSE, sceneActors[i]->getModelMatrix());
 		glUniform1ui(colorPickerShader->GetUniformID("colorID"), i);
-		sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
+		if (sceneActors[i]->GetComponent<MeshComponent>() != nullptr) sceneActors[i]->GetComponent<MeshComponent>()->Render(GL_TRIANGLES);
 	}
 
 	glUseProgram(0);
@@ -480,28 +514,31 @@ void Scene0::LoadSaveFile()
 
 		for (int i = 0; i < sceneActors.size(); ++i)
 		{
-			std::string pos = "MeshPosition";
-			if (!strcmp(child->Name(), (pos + std::to_string(i)).c_str()))
+			if (!strcmp(child->Name(), ("MeshPosition" + std::to_string(i)).c_str()))
 			{
 				float x, y, z;
-				sscanf_s(child->Attribute((pos + std::to_string(i)).c_str()), "%f, %f, %f", &x, &y, &z);
+				sscanf_s(child->Attribute(("MeshPosition" + std::to_string(i)).c_str()), "%f, %f, %f", &x, &y, &z);
 				sceneActors[i]->GetComponent<TransformComponent>()->SetPosition(Vec3(x, y, z));
 			}
 
-			std::string orient = "MeshOrientation";
-			if (!strcmp(child->Name(), (orient + std::to_string(i)).c_str()))
+			if (!strcmp(child->Name(), ("MeshOrientation" + std::to_string(i)).c_str()))
 			{
 				float x, y, z, w;
-				sscanf_s(child->Attribute((orient + std::to_string(i)).c_str()), "%f,%f,%f,%f", &x, &y, &z, &w);
+				sscanf_s(child->Attribute(("MeshOrientation" + std::to_string(i)).c_str()), "%f,%f,%f,%f", &x, &y, &z, &w);
 				sceneActors[i]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(w, Vec3(x, y, z)));
 			}
 
-			std::string scale = "MeshScale";
-			if (!strcmp(child->Name(), (scale + std::to_string(i)).c_str()))
+			if (!strcmp(child->Name(), ("MeshScale" + std::to_string(i)).c_str()))
 			{
 				float x, y, z;
-				sscanf_s(child->Attribute((scale + std::to_string(i)).c_str()), "%f,%f,%f", &x, &y, &z);
+				sscanf_s(child->Attribute(("MeshScale" + std::to_string(i)).c_str()), "%f,%f,%f", &x, &y, &z);
 				sceneActors[i]->GetComponent<TransformComponent>()->SetScale(Vec3(x, y, z));
+			}
+
+			if (!strcmp(child->Name(), ("Material" + std::to_string(i)).c_str()))
+			{
+				sceneActors[i]->RemoveComponent<MaterialComponent>();
+				sceneActors[i]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(child->Attribute(("Material" + std::to_string(i)).c_str())));
 			}
 		}
 	}
