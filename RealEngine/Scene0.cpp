@@ -142,7 +142,7 @@ void Scene0::HandleGUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Snow")) UpdateSkybox("SB_Snow");
 	ImGui::SameLine();
-	if (ImGui::Button("None")) skybox = nullptr;
+	if (ImGui::Button("None")) UpdateSkybox("None");
 	if (ImGui::Button("Reset", ImVec2(306.0, 30.0)))
 	{
 		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
@@ -152,6 +152,12 @@ void Scene0::HandleGUI()
 		backgroundColor = Vec4(0.0f, 0.0f, 0.0f, 0.0f);
 		skybox = assetManager->GetComponent<SkyboxActor>("SB_Beach");
 		lightPosition = Vec3(-10.0f, 4.0f, 6.0f);
+		for(int i = 0; i < sceneActors.size(); ++i)
+		{
+			sceneActors[i]->RemoveAllComponents();
+			sceneActors.clear();
+			meshesCount = -1;
+		}
 	}
 	ImGui::End();
 
@@ -210,7 +216,7 @@ void Scene0::HandleGUI()
 				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.y,
 				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().ijk.z,
 				sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetOrientation().w);
-			ImGui::SliderFloat3("Orientation", orient, -10.0f, 10.0f);
+			ImGui::InputFloat4("Orientation", orient);
 			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetOrientation(Quaternion(orient.w, Vec3(orient.x, orient.y, orient.z)));
 		}
 		if (ImGui::Button("Delete Object"))
@@ -412,6 +418,11 @@ int Scene0::Pick(int x, int y) {
 
 void Scene0::UpdateSkybox(const char* name)
 {
+	if (name == "None") 
+	{
+		skybox = nullptr;
+		currentSkybox == nullptr;
+	}
 	skybox = assetManager->GetComponent<SkyboxActor>(name);
 	currentSkybox = name;
 }
@@ -543,6 +554,7 @@ void Scene0::Save()
 	saveSystem.SaveVec3("LightPosition", lightPosition);
 	saveSystem.SaveVec4("LightColor", lightColor);
 	saveSystem.SaveVec4("BackgroundColor", backgroundColor);
-	saveSystem.SaveSkybox("Skybox", currentSkybox);
+	if (currentSkybox == nullptr) saveSystem.SaveSkybox("Skybox", "None");
+	else saveSystem.SaveSkybox("Skybox", currentSkybox);
 	printf("Progress Saved \n");
 }

@@ -25,6 +25,7 @@ public:
 	void SaveInt(const char* name, int nmbr);
 	void SaveChar(const char* name, const char* toSave);
 	void DeleteMesh(const char* name);
+	void ClearXML();
 	void LoadXML();
 
 };

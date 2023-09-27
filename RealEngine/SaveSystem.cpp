@@ -181,6 +181,11 @@ void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
+void SaveSystem::ClearXML()
+{
+
+}
+
 void SaveSystem::LoadXML()
 {
 	XML.LoadFile("XMLs/SaveFile.xml");
