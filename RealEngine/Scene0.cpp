@@ -271,6 +271,29 @@ void Scene0::HandleGUI()
 			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
 			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
 		}
+		ImGui::SameLine();
+		if (ImGui::Button("M_SciFi"))
+		{
+			materialName = "M_SciFi";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		if (ImGui::Button("M_Concrete"))
+		{
+			materialName = "M_Concrete";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("M_Pavement"))
+		{
+			materialName = "M_Pavement";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
 		ImGui::End();
 	}
 
