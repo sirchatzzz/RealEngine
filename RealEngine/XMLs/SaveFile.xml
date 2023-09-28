@@ -7,18 +7,6 @@
         <LightPosition LightPosition="-10.000000,4.000000,6.000000"/>
         <LightColor LightColor="1.000000,1.000000,1.000000,1.000000"/>
         <BackgroundColor BackgroundColor="0.000000,0.000000,0.000000,0.000000"/>
-        <Skybox Skybox="SB_Niagara"/>
-        <Material0 Material0="M_EvilEye"/>
-        <MeshPosition0 MeshPosition0="5.455000,0.000000,-5.000000"/>
-        <MeshOrientation0 MeshOrientation0="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale0 MeshScale0="1.000000,1.000000,1.000000"/>
-        <StaticMesh1 StaticMesh1="SM_Sphere"/>
-        <StaticMesh2 StaticMesh2="SM_Cube"/>
-        <MeshPosition1 MeshPosition1="0.000000,0.000000,-5.000000"/>
-        <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale1 MeshScale1="1.000000,1.000000,1.000000"/>
-        <MeshPosition2 MeshPosition2="2.727000,0.000000,-5.000000"/>
-        <MeshOrientation2 MeshOrientation2="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale2 MeshScale2="1.000000,1.000000,1.000000"/>
+        <Skybox Skybox="SB_Beach"/>
     </Data>
 </Root>

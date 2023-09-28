@@ -183,7 +183,12 @@ void SaveSystem::SaveSkybox(const char* name, const char* skyBox)
 
 void SaveSystem::ClearXML()
 {
+	rootData = XML.RootElement();
+	assetsData = rootData->FirstChildElement("Data");
 
+	assetsData->DeleteChildren();
+
+	XML.SaveFile("XMLs/SaveFile.xml");
 }
 
 void SaveSystem::LoadXML()

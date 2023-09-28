@@ -158,6 +158,8 @@ void Scene0::HandleGUI()
 			sceneActors.clear();
 			meshesCount = -1;
 		}
+		saveSystem.ClearXML();
+		Save();
 	}
 	ImGui::End();
 
