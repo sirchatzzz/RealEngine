@@ -142,7 +142,6 @@ void Scene0::HandleGUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Snow")) UpdateSkybox("SB_Snow");
 	ImGui::SameLine();
-	if (ImGui::Button("None")) UpdateSkybox("None");
 	if (ImGui::Button("Reset", ImVec2(306.0, 30.0)))
 	{
 		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
@@ -252,6 +251,21 @@ void Scene0::HandleGUI()
 		if (ImGui::Button("M_WhiteChecker"))
 		{
 			materialName = "M_WhiteChecker";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		if (ImGui::Button("M_Wood"))
+		{
+			materialName = "M_Wood";
+			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
+			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
+			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("M_ChippedPaint"))
+		{
+			materialName = "M_ChippedPaint";
 			sceneActors[selectedObject]->RemoveComponent<MaterialComponent>();
 			sceneActors[selectedObject]->AddComponent<MaterialComponent>(assetManager->GetComponent<MaterialComponent>(materialName));
 			saveSystem.SaveChar(("Material" + std::to_string(selectedObject)).c_str(), materialName);
@@ -420,11 +434,6 @@ int Scene0::Pick(int x, int y) {
 
 void Scene0::UpdateSkybox(const char* name)
 {
-	if (name == "None") 
-	{
-		skybox = nullptr;
-		currentSkybox == nullptr;
-	}
 	skybox = assetManager->GetComponent<SkyboxActor>(name);
 	currentSkybox = name;
 }
@@ -556,7 +565,6 @@ void Scene0::Save()
 	saveSystem.SaveVec3("LightPosition", lightPosition);
 	saveSystem.SaveVec4("LightColor", lightColor);
 	saveSystem.SaveVec4("BackgroundColor", backgroundColor);
-	if (currentSkybox == nullptr) saveSystem.SaveSkybox("Skybox", "None");
-	else saveSystem.SaveSkybox("Skybox", currentSkybox);
+	saveSystem.SaveSkybox("Skybox", currentSkybox);
 	printf("Progress Saved \n");
 }

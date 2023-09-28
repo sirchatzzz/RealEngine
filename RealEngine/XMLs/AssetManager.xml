@@ -14,6 +14,8 @@
 		<Material name ="M_WhiteChecker" path ="textures/whiteCheckerPiece.png"/>
 		<Material name ="M_RedChecker" path ="textures/redCheckerPiece.png"/>
 		<Material name ="M_Mario" path ="textures/mario_main.png"/>
+		<Material name ="M_ChippedPaint" path ="textures/chippedPaint.png"/>
+		<Material name ="M_Wood" path ="textures/wood.png"/>
 		<Sound name ="SE_Ding" path ="sound/ding.mp3"/>
 		<Sound name ="SE_Hit" path ="sound/hit.mp3"/>
 		<Camera name ="Camera"/>
