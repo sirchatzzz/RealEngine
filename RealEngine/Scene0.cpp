@@ -142,6 +142,7 @@ void Scene0::HandleGUI()
 	ImGui::SameLine();
 	if (ImGui::Button("Snow")) UpdateSkybox("SB_Snow");
 	ImGui::SameLine();
+	if (ImGui::Button("None")) skybox = nullptr;
 	if (ImGui::Button("Reset", ImVec2(306.0, 30.0)))
 	{
 		camera->GetComponent<TransformComponent>()->SetPosition(Vec3(0.0f, 0.0f, -5.0f));
