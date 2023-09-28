@@ -28,7 +28,7 @@ void main() {
 	vec3 viewDir = normalize(viewPos - fragPos);
 	float spec = 0.0;
 	vec3 halfwayDir = normalize(lightDir + viewDir);
-	spec = pow(max(dot(normal, halfwayDir), 0.0), 10.0);
+	spec = pow(max(dot(normal, halfwayDir), 0.0), 128.0);
 	vec3 specular = spec * lightColor;
 	float shadow = ShadowCalc(fragPosLightSpace);
 	vec3 lightning = (ambient +(1.0 - shadow) * (diffuse + specular)) * color;

@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
-        <MeshesCount MeshesCount="0"/>
-        <CameraPosition CameraPosition="0.000000,0.000000,-5.000000"/>
-        <CameraRotation CameraRotation="0.000000,0.000000,0.000000,1.000000"/>
-        <LightPosition LightPosition="-10.000000,4.000000,6.000000"/>
+        <MeshesCount MeshesCount="2"/>
+        <CameraPosition CameraPosition="-5.454000,-2.000000,-6.791000"/>
+        <CameraRotation CameraRotation="0.091000,-0.227000,-0.010000,1.000000"/>
+        <LightPosition LightPosition="9.000000,10.000000,8.000000"/>
         <LightColor LightColor="1.000000,1.000000,1.000000,1.000000"/>
-        <BackgroundColor BackgroundColor="0.000000,0.000000,0.000000,0.000000"/>
-        <Skybox Skybox="SB_Beach"/>
+        <BackgroundColor BackgroundColor="0.675676,0.576542,0.576542,0.000000"/>
+        <Skybox Skybox="SB_Sunset"/>
         <StaticMesh0 StaticMesh0="SM_Cube"/>
+        <MeshPosition0 MeshPosition0="0.000000,-2.200000,-7.000000"/>
+        <MeshOrientation0 MeshOrientation0="-0.100000,0.000000,0.000000,1.000000"/>
+        <MeshScale0 MeshScale0="20.000000,0.500000,-12.776000"/>
         <Material0 Material0="M_Wood"/>
-        <MeshPosition0 MeshPosition0="0.000000,0.000000,-5.000000"/>
-        <MeshOrientation0 MeshOrientation0="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale0 MeshScale0="1.000000,1.000000,1.000000"/>
+        <StaticMesh1 StaticMesh1="SM_Cube"/>
+        <MeshPosition1 MeshPosition1="0.606000,-0.600000,-3.209000"/>
+        <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
+        <MeshScale1 MeshScale1="1.200000,1.200000,1.200000"/>
+        <Material1 Material1="M_ChippedPaint"/>
+        <StaticMesh2 StaticMesh2="SM_Cube"/>
+        <Material2 Material2="M_Wood"/>
+        <MeshPosition2 MeshPosition2="3.636000,-0.700000,-2.612000"/>
+        <MeshOrientation2 MeshOrientation2="0.000000,0.200000,0.000000,1.000000"/>
+        <MeshScale2 MeshScale2="0.750000,0.750000,0.750000"/>
     </Data>
 </Root>

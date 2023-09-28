@@ -117,7 +117,7 @@ void Scene0::HandleGUI()
 
 	//camera position
 	Vec3 cameraPos = camera->GetComponent<TransformComponent>()->GetPosition();
-	ImGui::SliderFloat3("Camera Position", cameraPos, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Camera Position", cameraPos, -20.0f, 20.0f);
 	camera->GetComponent<TransformComponent>()->SetPosition(cameraPos);
 
 	//camera orientation
@@ -125,7 +125,7 @@ void Scene0::HandleGUI()
 	ImGui::SliderFloat4("Camera Rotation", cameraOrientationVector, -1.0f, 1.0f);
 
 	//light position
-	ImGui::SliderFloat3("Light Position", lightPosition, -10.0f, 10.0f);
+	ImGui::SliderFloat3("Light Position", lightPosition, -20.0f, 20.0f);
 
 	//light color
 	ImGui::ColorEdit4("Light Color", lightColor);
@@ -199,7 +199,7 @@ void Scene0::HandleGUI()
 		if(sceneActors.size() > selectedObject)
 		{
 			Vec3 position = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetPosition();
-			ImGui::SliderFloat3("Position", position, -10.0f, 10.0f);
+			ImGui::SliderFloat3("Position", position, -20.0f, 20.0f);
 			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetPosition(position);
 		}
 
@@ -207,7 +207,7 @@ void Scene0::HandleGUI()
 		if (sceneActors.size() > selectedObject)
 		{
 			Vec3 scale = sceneActors[selectedObject]->GetComponent<TransformComponent>()->GetScale();
-			ImGui::SliderFloat3("Scale", scale, -10.0f, 10.0f);
+			ImGui::SliderFloat3("Scale", scale, -20.0f, 20.0f);
 			if (selectedObject != -1) sceneActors[selectedObject]->GetComponent<TransformComponent>()->SetScale(scale);
 		}
 
@@ -283,12 +283,6 @@ void Scene0::Update(const float deltaTime)
 	saveTime += deltaTime;
 
 	camera->UpdateViewMatrix();
-
-	if(saveTime > 5.0f)
-	{
-		Save();
-		saveTime = 0.0f;
-	}
 
 	RenderShadowMap();
 	if(openGUI)	HandleGUI();

@@ -10,7 +10,7 @@
 #include "imgui_impl_opengl3.h"
 
 SceneManager::SceneManager(): 
-	currentScene{ nullptr }, window(nullptr), timer(nullptr),
+	currentScene(nullptr), window(nullptr), timer(nullptr),
 	fps(60), isRunning(false), fullScreen(false), showDemoWindow(false) {
 	Debug::Info("Starting the SceneManager", __FILE__, __LINE__);
 }
