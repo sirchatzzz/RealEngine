@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Root>
     <Data>
-        <MeshesCount MeshesCount="3"/>
-        <CameraPosition CameraPosition="-5.454000,-2.000000,-6.791000"/>
-        <CameraRotation CameraRotation="0.091000,-0.227000,-0.010000,1.000000"/>
-        <LightPosition LightPosition="9.000000,10.000000,8.000000"/>
+        <MeshesCount MeshesCount="1"/>
+        <CameraPosition CameraPosition="0.000000,0.000000,-5.000000"/>
+        <CameraRotation CameraRotation="0.000000,0.000000,0.000000,1.000000"/>
+        <LightPosition LightPosition="-10.000000,4.000000,6.000000"/>
         <LightColor LightColor="1.000000,1.000000,1.000000,1.000000"/>
-        <BackgroundColor BackgroundColor="0.397683,0.388471,0.388471,0.000000"/>
-        <Skybox Skybox="SB_Snow"/>
+        <BackgroundColor BackgroundColor="0.000000,0.000000,0.000000,0.000000"/>
+        <Skybox Skybox="SB_Beach"/>
         <StaticMesh0 StaticMesh0="SM_Cube"/>
-        <MeshPosition0 MeshPosition0="0.000000,-2.200000,-2.800000"/>
-        <MeshOrientation0 MeshOrientation0="-0.100000,0.000000,0.000000,1.000000"/>
-        <MeshScale0 MeshScale0="20.000000,0.500000,-12.776000"/>
         <Material0 Material0="M_Concrete"/>
-        <StaticMesh1 StaticMesh1="SM_Cube"/>
-        <MeshPosition1 MeshPosition1="0.606000,-0.600000,-3.209000"/>
-        <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale1 MeshScale1="1.200000,1.200000,1.200000"/>
+        <StaticMesh1 StaticMesh1="SM_Sphere"/>
         <Material1 Material1="M_SciFi"/>
-        <StaticMesh2 StaticMesh2="SM_Cube"/>
-        <Material2 Material2="M_Wood"/>
-        <MeshPosition2 MeshPosition2="3.636000,-0.700000,-2.612000"/>
-        <MeshOrientation2 MeshOrientation2="0.000000,0.200000,0.000000,1.000000"/>
-        <MeshScale2 MeshScale2="0.750000,0.750000,0.750000"/>
-        <StaticMesh3 StaticMesh3="SM_Cube"/>
-        <Material3 Material3="M_ChippedPaint"/>
-        <MeshPosition3 MeshPosition3="3.636000,0.700000,-2.800000"/>
-        <MeshOrientation3 MeshOrientation3="0.000000,0.000000,0.000000,1.000000"/>
-        <MeshScale3 MeshScale3="0.650000,0.650000,0.650000"/>
+        <MeshPosition0 MeshPosition0="0.000000,0.000000,-11.567000"/>
+        <MeshOrientation0 MeshOrientation0="0.000000,0.000000,0.000000,1.000000"/>
+        <MeshScale0 MeshScale0="4.636000,3.424000,0.403000"/>
+        <MeshPosition1 MeshPosition1="0.000000,1.212000,-8.582000"/>
+        <MeshOrientation1 MeshOrientation1="0.000000,0.000000,0.000000,1.000000"/>
+        <MeshScale1 MeshScale1="1.000000,1.000000,1.000000"/>
     </Data>
 </Root>

@@ -72,11 +72,26 @@ void Scene0::HandleEvents(const SDL_Event& sdlEvent)
 		case SDL_SCANCODE_G:
 			openGUI = !openGUI;
 			break;
-		case SDL_SCANCODE_R:
-			//canRotate = !canRotate;
+		case SDL_SCANCODE_LCTRL:
+			Save();
+			break;
+		case SDL_SCANCODE_E:
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x, camera->GetComponent<TransformComponent>()->GetPosition().y, camera->GetComponent<TransformComponent>()->GetPosition().z + 0.2f));
+			break;
+		case SDL_SCANCODE_C:
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x, camera->GetComponent<TransformComponent>()->GetPosition().y, camera->GetComponent<TransformComponent>()->GetPosition().z - 0.2f));
+			break;
+		case SDL_SCANCODE_A:
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x + 0.2f, camera->GetComponent<TransformComponent>()->GetPosition().y, camera->GetComponent<TransformComponent>()->GetPosition().z));
+			break;
+		case SDL_SCANCODE_D:
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x - 0.2f, camera->GetComponent<TransformComponent>()->GetPosition().y, camera->GetComponent<TransformComponent>()->GetPosition().z));
+			break;
+		case SDL_SCANCODE_W:
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x, camera->GetComponent<TransformComponent>()->GetPosition().y - 0.2f, camera->GetComponent<TransformComponent>()->GetPosition().z));
 			break;
 		case SDL_SCANCODE_S:
-			Save();
+			camera->GetComponent<TransformComponent>()->SetPosition(Vec3(camera->GetComponent<TransformComponent>()->GetPosition().x, camera->GetComponent<TransformComponent>()->GetPosition().y + 0.2f, camera->GetComponent<TransformComponent>()->GetPosition().z));
 			break;
 		}
 		break;
